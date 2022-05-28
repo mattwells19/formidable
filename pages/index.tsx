@@ -12,6 +12,7 @@ import zod from "zod";
 import { useMemo, useReducer, useState } from "react";
 import { useIntl } from "react-intl";
 import FormSubmissionModal from "../components/FormSubmissionModal";
+import { getUTCDate } from "../components/Form/utils";
 
 const movieOptions = ["The Peanut Butter Falcon", "Harry Potter", "Arrival"];
 const bookOptions = ["Anxious People", "Martyn Pig", "Lucas", "Other"];
@@ -28,6 +29,7 @@ type FormValues = {
   radio: string;
   limitedCheckbox: Array<string>;
   textList: Array<string>;
+  date: Date;
   dependentInput?: string;
 };
 
@@ -79,11 +81,21 @@ function useFormValidation(isOpen: boolean) {
         required_error: formatMessage({ id: "fieldIsRequired" }),
       }),
       textList: zod
-        .string({
-          required_error: formatMessage({ id: "fieldIsRequired" }),
-        })
+        .string()
         .array()
-        .min(1),
+        .min(1, {
+          message: formatMessage({ id: "fieldIsRequired" }),
+        }),
+      date: zod
+        .date({
+          invalid_type_error: formatMessage({ id: "fieldIsRequired" }),
+        })
+        .refine((val) => Boolean(val), {
+          message: formatMessage({ id: "fieldIsRequired" }),
+        })
+        .refine((val) => getUTCDate(val).getTime() < getUTCDate().getTime(), {
+          message: formatMessage({ id: "mustBeInThePast" }),
+        }),
     });
 
     const formValidationWithOther = formValidationNoOther.merge(
@@ -201,6 +213,12 @@ export default function App() {
                   name="textList"
                   label="Text list"
                   helperText="Separate by commas."
+                />
+                <Field
+                  type="date"
+                  name="date"
+                  label="Date field"
+                  helperText="Cannot be today."
                 />
                 <Button
                   disabled={formValidationState !== "complete"}

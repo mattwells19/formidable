@@ -35,7 +35,6 @@ export default function ToggleButton({
       rounded="lg"
       p={3}
       cursor="pointer"
-      onBlur={() => console.log("blur")}
       {...htmlProps}
       {...getRootProps()}
       {...getCheckboxProps()}

@@ -33,8 +33,8 @@ const CurrencyField = ({
       <InputLeftElement pointerEvents="none">$</InputLeftElement>
       <input name={name} type="number" hidden readOnly ref={hiddenInputRef} />
       <Input
-        {...props}
         width={{ base: "full", md: "50%" }}
+        {...props}
         name={`formatted_${name}`}
         inputMode="numeric"
         type="text"

@@ -203,6 +203,7 @@ export default function Form<FormValues extends ZodRawShape>({
         formErrorMap={formErrorMap}
         touchedFields={touchedFields}
         formValidationState={formValidationState}
+        formRef={formRef}
       />
     </FormContextProvider>
   );

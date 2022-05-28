@@ -5,7 +5,6 @@ export function extractFormValues(
   formDataObj: FormData
 ): Record<string, string | number | Array<string>> {
   return fields.reduce((acc, field) => {
-    if (!formDataObj.has(field.name)) return acc;
     switch (field.type) {
       case "toggle-radio":
       case "textarea":
@@ -13,25 +12,26 @@ export function extractFormValues(
       case "text":
         return {
           ...acc,
-          [field.name]: formDataObj.getAll(field.name)[0].toString(),
+          [field.name]: formDataObj.getAll(field.name)[0]?.toString(),
         };
       case "currency":
       case "number":
         return {
           ...acc,
           [field.name]: parseInt(
-            formDataObj.getAll(field.name)[0].toString(),
+            formDataObj.getAll(field.name)[0]?.toString(),
             10
           ),
         };
-      case "toggle-checkbox":
+      case "toggle-checkbox": {
         return {
           ...acc,
           [field.name]: formDataObj
             .getAll(field.name)
             .map((item) => item.toString()),
         };
-      case "multi-select":
+      }
+      case "multi-select": {
         const inputValue = formDataObj.getAll(field.name)[0].toString();
         const value =
           inputValue.length > 0
@@ -42,8 +42,23 @@ export function extractFormValues(
           ...acc,
           [field.name]: value,
         };
+      }
+      case "date": {
+        const value = formDataObj.getAll(field.name)[0]?.toString();
+
+        return {
+          ...acc,
+          [field.name]: value ? new Date(value) : null,
+        };
+      }
       default:
         return acc;
     }
   }, {});
+}
+
+export function getUTCDate(date: Date = new Date()): Date {
+  return new Date(
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
+  );
 }

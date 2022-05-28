@@ -7,6 +7,8 @@ import {
   FormLabel,
   FormLabelProps,
   Tooltip,
+  Icon,
+  Text,
 } from "@chakra-ui/react";
 import { ReactElement, useEffect } from "react";
 import { useForm } from "./contexts/FormContext";
@@ -20,6 +22,8 @@ import type { FieldProps, FieldSpecificProps } from "./types";
 // import HelperTextIcon from "@/assets/HelperTextIcon";
 import CurrencyField from "./components/CurrencyField";
 import TextListField from "./components/TextListField";
+import DateField from "./components/DateField";
+import { useIntl } from "react-intl";
 
 function FieldComponent(props: FieldSpecificProps): ReactElement | null {
   switch (props.type) {
@@ -47,9 +51,21 @@ function FieldComponent(props: FieldSpecificProps): ReactElement | null {
     case "multi-select": {
       return <TextListField {...props} />;
     }
+    case "date": {
+      return <DateField {...props} />;
+    }
     default:
       return null;
   }
+}
+
+function OptionalIndicator() {
+  const { formatMessage } = useIntl();
+  return (
+    <Text as="span" paddingLeft="2" color="gray.400">
+      ({formatMessage({ id: "optional" })})
+    </Text>
+  );
 }
 
 export default function Field({
@@ -115,13 +131,28 @@ export default function Field({
       isInvalid={Boolean(formContext?.error && formContext?.isTouched)}
       {...formControlProps}
     >
-      <FormLabel {...labelProps}>
+      <FormLabel
+        display="flex"
+        alignItems="center"
+        optionalIndicator={isOptional ? <OptionalIndicator /> : undefined}
+        {...labelProps}
+      >
         {label}
         {tooltipText ? (
-          <Tooltip shouldWrapChildren label={tooltipText}>
-            <chakra.span bg="blue.500" marginLeft="2" padding="1">
-              {"ℹ️"}
-            </chakra.span>
+          <Tooltip label={tooltipText}>
+            <Icon viewBox="0 0 24 24" color="blue.300" marginLeft="2">
+              <circle
+                x="50%"
+                y="50%"
+                cx="12"
+                cy="12"
+                r="12"
+                fill="currentColor"
+              />
+              <text x="40%" y="75%" fontWeight="bold">
+                i
+              </text>
+            </Icon>
           </Tooltip>
         ) : null}
       </FormLabel>

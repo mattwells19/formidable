@@ -9,14 +9,16 @@ import {
   Heading,
   StatHelpText,
 } from "@chakra-ui/react";
-import { FC, useEffect, useReducer, useRef } from "react";
+import { FC, MutableRefObject, useEffect, useReducer, useRef } from "react";
 import { FormElement, FormValidationState } from "./Form/types";
+import { extractFormValues } from "./Form/utils";
 
 interface IDebugFormProps {
   fields: Array<FormElement>;
   formErrorMap: Map<string, string>;
   touchedFields: Set<string>;
   formValidationState: FormValidationState;
+  formRef: MutableRefObject<HTMLFormElement | null>;
 }
 
 const DebugForm: FC<IDebugFormProps> = ({
@@ -24,8 +26,9 @@ const DebugForm: FC<IDebugFormProps> = ({
   formErrorMap,
   touchedFields,
   formValidationState,
+  formRef,
 }) => {
-  const renderCounterRef = useRef<number>(0);
+  const renderCounterRef = useRef<number>(1);
   const [, reset] = useReducer(() => {
     renderCounterRef.current = 0;
     return new Map();
@@ -43,8 +46,8 @@ const DebugForm: FC<IDebugFormProps> = ({
       <StatGroup
         display="grid"
         gridTemplateColumns={{
-          base: "repeat(auto-fit, 1fr)",
-          md: "repeat(2, 1fr)",
+          base: "repeat(auto-fit, min-content)",
+          md: "repeat(2, min-content)",
         }}
         gap="5"
         marginY="8"
@@ -68,16 +71,22 @@ const DebugForm: FC<IDebugFormProps> = ({
           </Code>
         </Stat>
         <Stat>
-          <StatLabel>Registered Fields</StatLabel>
-          <Code>
-            <pre>{JSON.stringify(fields, undefined, 2)}</pre>
-          </Code>
-        </Stat>
-        <Stat>
-          <StatLabel>Errors</StatLabel>
-          <Code>
-            <pre>{JSON.stringify(Array.from(formErrorMap), undefined, 2)}</pre>
-          </Code>
+          <StatLabel>Form Values</StatLabel>
+          {formRef.current ? (
+            <Code>
+              <pre>
+                {JSON.stringify(
+                  extractFormValues(fields, new FormData(formRef.current)),
+                  undefined,
+                  2
+                )}
+              </pre>
+            </Code>
+          ) : null}
+          <StatHelpText>
+            Uses ref so only updates on re-renders. Click the Reset button to
+            force a re-render.
+          </StatHelpText>
         </Stat>
         <Stat>
           <StatLabel>Touched</StatLabel>
@@ -88,6 +97,18 @@ const DebugForm: FC<IDebugFormProps> = ({
             Names prefixed with &apos;formatted_&apos; use a dummy controlled
             input for display purposes and a hidden input for the actual value.
           </StatHelpText>
+        </Stat>
+        <Stat>
+          <StatLabel>Registered Fields</StatLabel>
+          <Code>
+            <pre>{JSON.stringify(fields, undefined, 2)}</pre>
+          </Code>
+        </Stat>
+        <Stat>
+          <StatLabel>Errors</StatLabel>
+          <Code>
+            <pre>{JSON.stringify(Array.from(formErrorMap), undefined, 2)}</pre>
+          </Code>
         </Stat>
       </StatGroup>
     </Box>
