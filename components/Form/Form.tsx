@@ -13,6 +13,7 @@ import {
 import type { ZodObject, ZodRawShape } from "zod";
 import zod from "zod";
 import { FormContextProvider } from "./contexts/FormContext";
+import DebugForm from "./DebugForm";
 import type { FormValidationState, FormElement } from "./types";
 import { extractFormValues } from "./utils";
 
@@ -42,8 +43,6 @@ export default function Form<FormValues extends ZodRawShape>({
     () => new Map()
   );
   const formRef = useRef<HTMLFormElement | null>(null);
-
-  // console.log("render");
 
   const formValidationState = useMemo(() => {
     const allRequiredFields = fields.filter((field) => field.isRequired);
@@ -197,6 +196,12 @@ export default function Form<FormValues extends ZodRawShape>({
           ? children(formValidationState)
           : children}
       </chakra.form>
+      <DebugForm
+        fields={fields}
+        formErrorMap={formErrorMap}
+        touchedFields={touchedFields}
+        formValidationState={formValidationState}
+      />
     </FormContextProvider>
   );
 }

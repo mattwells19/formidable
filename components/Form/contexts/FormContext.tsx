@@ -27,7 +27,13 @@ export function useForm(fieldName: string): UseFormResult | null {
       return context.formErrorMap.get(fieldName);
     },
     get isTouched() {
-      return context.ignoreTouch || context.touchedFields.has(fieldName);
+      return (
+        context.ignoreTouch ||
+        context.touchedFields.has(fieldName) ||
+        // special formatted fields have a separate controlled input with a name
+        // that's prefixed with 'formatted_{inputName}'
+        context.touchedFields.has(`formatted_${fieldName}`)
+      );
     },
   };
 }

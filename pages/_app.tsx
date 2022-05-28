@@ -1,6 +1,7 @@
 import type { AppProps } from "next/app";
 import { ChakraProvider } from "@chakra-ui/react";
 import Head from "next/head";
+import { IntlProvider } from "react-intl";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -8,9 +9,11 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Head>
         <title>Formidable</title>
       </Head>
-      <ChakraProvider>
-        <Component {...pageProps} />
-      </ChakraProvider>
+      <IntlProvider locale="en-US">
+        <ChakraProvider>
+          <Component {...pageProps} />
+        </ChakraProvider>
+      </IntlProvider>
     </>
   );
 }

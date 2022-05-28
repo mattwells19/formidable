@@ -1,5 +1,5 @@
 import { Container, Button, useDisclosure } from "@chakra-ui/react";
-import Form, { Field, FormValidationState, zu } from "../components/Form";
+import Form, { Field, zu } from "../components/Form";
 import zod from "zod";
 
 const movieOptions = ["The Peanut Butter Falcon", "Harry Potter", "Arrival"];
@@ -7,28 +7,30 @@ const bookOptions = ["Anxious People", "Martyn Pig", "Lucas", "Other"];
 const foodOptions = ["Pizza", "Burger", "Salmon", "Anything else"];
 
 const formValidation = zod.object({
-  favoriteColor: zu.text,
-  favoriteNumber: zu.number,
-  favoriteMovie: zod.string().optional(),
-  favoriteMovieExplanation: zod.string().min(10).max(500),
-  favoriteBook: zu.multi,
-  favoriteFood: zu.radio,
+  textInput: zu.text,
+  currency: zu.number,
+  numberInput: zu.number,
+  optionalInput: zod.string().optional(),
+  textArea: zod.string().min(10).max(500),
+  checkbox: zu.multi,
+  radio: zu.radio,
 });
 
 const formValidationWithOther = formValidation.merge(
   zod.object({
-    otherFavoriteBook: zu.text,
+    dependentInput: zu.text,
   })
 );
 
 type FormValues = {
-  favoriteColor: string;
-  favoriteNumber: number;
-  favoriteMovie?: string;
-  favoriteMovieExplanation: string;
-  favoriteBook: Array<string>;
-  favoriteFood: string;
-  otherFavoriteBook?: string;
+  textInput: string;
+  currency: number;
+  numberInput: number;
+  optionalInput?: string;
+  textArea: string;
+  checkbox: Array<string>;
+  radio: string;
+  dependentInput?: string;
 };
 
 export default function App() {
@@ -50,34 +52,35 @@ export default function App() {
       >
         {(formValidationState) => (
           <>
-            <Field type="text" name="favoriteColor" label="Favorite Color" />
+            <Field type="text" name="textInput" label="Basic text" />
+            <Field type="currency" name="currency" label="Currency field" />
             <Field
               type="number"
-              name="favoriteNumber"
-              label="Favorite Number"
+              name="numberInput"
+              label="Numbers only"
               tooltipText="Has to be positive"
-              min="0"
+              min={0}
             />
             <Field
               type="select"
-              name="favoriteMovie"
-              label="Favorite Movie"
+              name="optionalInput"
+              label="Optional select"
               isOptional
               options={movieOptions}
               placeholder="Make a selection"
             />
             <Field
               type="textarea"
-              name="favoriteMovieExplanation"
-              label="Explain why it's your favorite movie."
+              name="textArea"
+              label="Text area field"
               helperText="Min 10 characters"
               minLength={10}
             />
             <Field
               type="toggle-checkbox"
               options={bookOptions}
-              name="favoriteBook"
-              label="Favorite Book"
+              name="checkbox"
+              label="Checkbox group with Other"
               onChange={(values) => {
                 if (values.includes("Other") && !isOpen) {
                   onOpen();
@@ -87,16 +90,12 @@ export default function App() {
               }}
             />
             {isOpen ? (
-              <Field
-                type="text"
-                name="otherFavoriteBook"
-                label="Other Favorite Book"
-              />
+              <Field type="text" name="dependentInput" label="Other input" />
             ) : null}
             <Field
               type="toggle-radio"
-              name="favoriteFood"
-              label="Favorite Food"
+              name="radio"
+              label="Radio group"
               options={foodOptions}
               getOptionLabel={(option) => option.toUpperCase()}
             />

@@ -2,11 +2,10 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
-  InputProps
+  InputProps,
 } from "@chakra-ui/react";
-import { ReactElement, useEffect, useState } from "react";
-// import { useIntl } from 'react-intl';
-import { useField } from "../contexts/FieldContext";
+import { ReactElement, useRef, useState } from "react";
+import { useIntl } from "react-intl";
 import type { CommonFieldSpecificProps } from "../types";
 
 export interface CurrencyFieldProps
@@ -21,31 +20,25 @@ const CurrencyField = ({
   defaultValue,
   ...props
 }: CurrencyFieldProps): ReactElement => {
-  // const { formatNumber } = useIntl();
+  const { formatNumber } = useIntl();
   const [inputValue, setInputValue] = useState<number | null>(
     defaultValue ?? null
   );
+  const hiddenInputRef = useRef<HTMLInputElement | null>(null);
 
   const fieldValue = value ?? inputValue;
 
   return (
     <InputGroup>
       <InputLeftElement pointerEvents="none">$</InputLeftElement>
-      <input
-        name={name}
-        type="number"
-        hidden
-        readOnly
-        value={fieldValue ?? ""}
-      />
+      <input name={name} type="number" hidden readOnly ref={hiddenInputRef} />
       <Input
         {...props}
         width={{ base: "full", md: "50%" }}
-        name={`currency-formatted_${name}`}
+        name={`formatted_${name}`}
         inputMode="numeric"
         type="text"
-        value={fieldValue ?? ""}
-        // value={fieldValue ? formatNumber(fieldValue, { currency: 'USD' }) : ''}
+        value={fieldValue ? formatNumber(fieldValue, { currency: "USD" }) : ""}
         onChange={(e) => {
           const parsedNumber = parseInt(e.target.value.replaceAll(",", ""), 10);
           if (!Number.isNaN(parsedNumber) || e.target.value === "") {
@@ -53,6 +46,11 @@ const CurrencyField = ({
             if (value === undefined) {
               setInputValue(finalValue);
             }
+
+            if (hiddenInputRef.current) {
+              hiddenInputRef.current.value = parsedNumber.toString();
+            }
+
             props.onChange?.(finalValue);
           }
         }}

@@ -1,4 +1,5 @@
 import {
+  chakra,
   FormControl,
   FormControlProps,
   FormErrorMessage,
@@ -7,9 +8,8 @@ import {
   FormLabelProps,
   Tooltip,
 } from "@chakra-ui/react";
-import { ReactElement, useEffect, useState, FocusEvent } from "react";
+import { ReactElement, useEffect } from "react";
 import { useForm } from "./contexts/FormContext";
-import { FieldContextProvider } from "./contexts/FieldContext";
 import TextField from "./components/TextField";
 import NumberField from "./components/NumberField";
 import SelectField from "./components/SelectField";
@@ -113,11 +113,13 @@ export default function Field({
     >
       <FormLabel {...labelProps}>
         {label}
-        {/* {tooltipText ? (
+        {tooltipText ? (
           <Tooltip shouldWrapChildren label={tooltipText}>
-            ""
+            <chakra.span bg="blue.500" marginLeft="2" padding="1">
+              {"ℹ️"}
+            </chakra.span>
           </Tooltip>
-        ) : null} */}
+        ) : null}
       </FormLabel>
       <FieldComponent name={name} {...rest} />
       {/* eslint-disable-next-line no-nested-ternary */}
