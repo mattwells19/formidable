@@ -1,7 +1,6 @@
 import { Input, InputProps } from "@chakra-ui/react";
-import { ReactElement, useEffect } from "react";
+import { ReactElement } from "react";
 import type { CommonFieldSpecificProps, OmitOverlap } from "../types";
-import { useField } from "../contexts/FieldContext";
 
 export interface NumberFieldProps
   extends CommonFieldSpecificProps<number | null>,

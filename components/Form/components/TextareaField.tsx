@@ -1,11 +1,6 @@
 import { Textarea, TextareaProps } from "@chakra-ui/react";
-import { ReactElement, useEffect } from "react";
-import type {
-  CommonFieldSpecificProps,
-  OmitOverlap,
-  ValidateFieldFn
-} from "../types";
-import { useField } from "../contexts/FieldContext";
+import { ReactElement } from "react";
+import type { CommonFieldSpecificProps, OmitOverlap } from "../types";
 
 export interface TextareaFieldProps
   extends CommonFieldSpecificProps<string>,

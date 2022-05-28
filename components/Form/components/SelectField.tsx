@@ -1,7 +1,6 @@
 import { Select, SelectProps } from "@chakra-ui/react";
-import { ReactElement, useEffect } from "react";
+import { ReactElement } from "react";
 import type { CommonFieldSpecificProps, OmitOverlap } from "../types";
-import { useField } from "../contexts/FieldContext";
 
 export interface SelectFieldProps
   extends CommonFieldSpecificProps<string>,
