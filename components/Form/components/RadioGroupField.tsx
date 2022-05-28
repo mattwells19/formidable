@@ -1,12 +1,13 @@
 import {
   useRadioGroup,
-  RadioGroup,
   RadioGroupProps,
-  Radio
+  useRadio,
+  UseRadioProps,
+  Flex,
 } from "@chakra-ui/react";
-import { ReactElement, useEffect } from "react";
+import { ReactElement } from "react";
 import type { CommonFieldSpecificProps, OmitOverlap } from "../types";
-import { useField } from "../contexts/FieldContext";
+import ToggleButton from "./ToggleButton";
 
 export interface RadioGroupFieldProps
   extends CommonFieldSpecificProps<string>,
@@ -16,6 +17,24 @@ export interface RadioGroupFieldProps
   getOptionLabel?: (option: string) => string;
 }
 
+interface ToggleRadioProps
+  extends UseRadioProps,
+    Pick<RadioGroupFieldProps, "getOptionLabel"> {
+  myvalue: string;
+}
+
+function ToggleRadio({ getOptionLabel, myvalue, ...props }: ToggleRadioProps) {
+  const radioProps = useRadio({ ...props, value: myvalue });
+
+  return (
+    <ToggleButton
+      {...radioProps}
+      getOptionLabel={getOptionLabel}
+      value={myvalue}
+    />
+  );
+}
+
 export default function RadioGroupField({
   options,
   name,
@@ -23,21 +42,25 @@ export default function RadioGroupField({
   value,
   defaultValue,
   onChange,
-  ...radioGroupProps
+  ...containerProps
 }: RadioGroupFieldProps): ReactElement {
   const { getRadioProps } = useRadioGroup({
     value,
     defaultValue,
-    onChange
+    onChange,
   });
 
   return (
-    <RadioGroup {...radioGroupProps}>
+    <Flex justifyContent="space-evenly" gap="2" {...containerProps}>
       {options.map((option) => (
-        <Radio key={option} {...getRadioProps({ value: option })} name={name}>
-          {getOptionLabel ? getOptionLabel(option) : option}
-        </Radio>
+        <ToggleRadio
+          key={option}
+          myvalue={option}
+          {...getRadioProps({ value: option })}
+          name={name}
+          getOptionLabel={getOptionLabel}
+        />
       ))}
-    </RadioGroup>
+    </Flex>
   );
 }

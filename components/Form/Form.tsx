@@ -133,6 +133,8 @@ export default function Form<FormValues extends ZodRawShape>({
 
   function handleTouch(e: React.FocusEvent<HTMLFormElement>) {
     const inputName = e.target.name;
+    if (!inputName) return;
+
     setTouchedFields((prevTouched) => {
       if (prevTouched.has(inputName)) {
         return prevTouched;

@@ -1,20 +1,39 @@
 import {
   useCheckboxGroup,
-  CheckboxGroup,
-  Checkbox,
-  CheckboxGroupProps
+  FlexProps,
+  Flex,
+  useCheckbox,
+  UseCheckboxProps,
 } from "@chakra-ui/react";
-import { ReactElement, useEffect } from "react";
+import { ReactElement } from "react";
 import type { CommonFieldSpecificProps, OmitOverlap } from "../types";
-import { useField } from "../contexts/FieldContext";
+import ToggleButton from "./ToggleButton";
 
 export interface CheckboxGroupFieldProps
   extends CommonFieldSpecificProps<Array<string>>,
-    OmitOverlap<CheckboxGroupProps> {
+    OmitOverlap<FlexProps> {
   type: "toggle-checkbox";
   options: Array<string>;
   getOptionLabel?: (option: string) => string;
   limit?: number;
+}
+
+interface CheckboxProps
+  extends UseCheckboxProps,
+    Pick<CheckboxGroupFieldProps, "getOptionLabel"> {
+  value: string;
+}
+
+function ToggleCheckbox({ getOptionLabel, ...props }: CheckboxProps) {
+  const checkboxProps = useCheckbox(props);
+
+  return (
+    <ToggleButton
+      {...checkboxProps}
+      getOptionLabel={getOptionLabel}
+      value={props.value}
+    />
+  );
 }
 
 export default function CheckboxGroupField({
@@ -26,7 +45,7 @@ export default function CheckboxGroupField({
   onChange,
   value,
   type,
-  ...checkboxGroupProps
+  ...containerProps
 }: CheckboxGroupFieldProps): ReactElement {
   const handleValuesChange = (changes: Array<string>): void => {
     if (limit && changes.length > limit) {
@@ -38,26 +57,25 @@ export default function CheckboxGroupField({
   const { getCheckboxProps, value: groupValue } = useCheckboxGroup({
     onChange: handleValuesChange,
     value,
-    defaultValue
+    defaultValue,
   });
 
   return (
-    <CheckboxGroup {...checkboxGroupProps}>
+    <Flex justifyContent="space-evenly" gap="2" {...containerProps}>
       {options.map((option) => (
-        <Checkbox
+        <ToggleCheckbox
           key={option}
+          value={option}
           {...getCheckboxProps({
             value: option,
-            name,
-            disabled:
-              limit &&
-              groupValue.length === limit &&
-              !groupValue.includes(option)
           })}
-        >
-          {getOptionLabel ? getOptionLabel(option) : option}
-        </Checkbox>
+          isDisabled={Boolean(
+            limit && groupValue.length === limit && !groupValue.includes(option)
+          )}
+          name={name}
+          getOptionLabel={getOptionLabel}
+        />
       ))}
-    </CheckboxGroup>
+    </Flex>
   );
 }

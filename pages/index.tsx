@@ -1,10 +1,17 @@
-import { Container, Button, useDisclosure } from "@chakra-ui/react";
+import {
+  Container,
+  Button,
+  useDisclosure,
+  ButtonGroup,
+} from "@chakra-ui/react";
 import Form, { Field, zu } from "../components/Form";
 import zod from "zod";
+import { useReducer } from "react";
 
 const movieOptions = ["The Peanut Butter Falcon", "Harry Potter", "Arrival"];
 const bookOptions = ["Anxious People", "Martyn Pig", "Lucas", "Other"];
 const foodOptions = ["Pizza", "Burger", "Salmon", "Anything else"];
+const colorOptions = ["Blue", "Orange", "Red", "Green"];
 
 const formValidation = zod.object({
   textInput: zu.text,
@@ -13,6 +20,7 @@ const formValidation = zod.object({
   optionalInput: zod.string().optional(),
   textArea: zod.string().min(10).max(500),
   checkbox: zu.multi,
+  limitedCheckbox: zu.multi,
   radio: zu.radio,
 });
 
@@ -30,10 +38,14 @@ type FormValues = {
   textArea: string;
   checkbox: Array<string>;
   radio: string;
+  limitedCheckbox: Array<string>;
   dependentInput?: string;
 };
 
 export default function App() {
+  const [key, reset] = useReducer((prev) => !prev, true);
+  const [ignoreTouch, toggleIgnoreTouch] = useReducer((prev) => !prev, true);
+
   const { onOpen, isOpen, onClose } = useDisclosure();
   const handleSubmit = (formValues: FormValues) => {
     console.log(formValues);
@@ -42,13 +54,15 @@ export default function App() {
   return (
     <Container marginY="10">
       <Form
+        key={`${key}`}
         onSubmit={handleSubmit}
+        validationShape={isOpen ? formValidationWithOther : formValidation}
+        ignoreTouch={ignoreTouch}
         display="flex"
         flexDir="column"
         gap="5"
         justifyContent="flex-start"
-        validationShape={isOpen ? formValidationWithOther : formValidation}
-        ignoreTouch={false}
+        marginY="16"
       >
         {(formValidationState) => (
           <>
@@ -93,6 +107,14 @@ export default function App() {
               <Field type="text" name="dependentInput" label="Other input" />
             ) : null}
             <Field
+              type="toggle-checkbox"
+              options={colorOptions}
+              name="limitedCheckbox"
+              label="Limited checkbox group"
+              helperText="Select up to 2"
+              limit={2}
+            />
+            <Field
               type="toggle-radio"
               name="radio"
               label="Radio group"
@@ -102,6 +124,12 @@ export default function App() {
             <Button disabled={formValidationState !== "complete"} type="submit">
               Submit
             </Button>
+            <ButtonGroup>
+              <Button onClick={reset}>Reset</Button>
+              <Button onClick={toggleIgnoreTouch}>
+                Ignore touch: {`${ignoreTouch}`}
+              </Button>
+            </ButtonGroup>
           </>
         )}
       </Form>

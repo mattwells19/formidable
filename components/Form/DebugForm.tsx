@@ -34,11 +34,12 @@ const DebugForm: FC<IDebugFormProps> = ({
 
   return (
     <StatGroup
-      flexWrap="wrap"
+      display="grid"
+      gridTemplateColumns="repeat(2, 1fr)"
       gap="5"
       marginY="8"
       sx={{
-        dt: { fontSize: "lg", whiteSpace: "nowrap" },
+        dt: { fontSize: "lg", whiteSpace: "nowrap", fontWeight: "bold" },
       }}
     >
       <Stat>
