@@ -10,7 +10,7 @@ import {
   Icon,
   Text,
 } from "@chakra-ui/react";
-import { ReactElement, useEffect } from "react";
+import { memo, ReactElement, useEffect } from "react";
 import { useForm } from "./contexts/FormContext";
 import TextField from "./components/TextField";
 import NumberField from "./components/NumberField";
@@ -18,7 +18,11 @@ import SelectField from "./components/SelectField";
 import TextareaField from "./components/TextareaField";
 import CheckboxGroupField from "./components/CheckboxGroupField";
 import RadioGroupField from "./components/RadioGroupField";
-import type { FieldProps, FieldSpecificProps } from "./types";
+import type {
+  FieldComponentProps,
+  FieldProps,
+  FieldSpecificProps,
+} from "./types";
 // import HelperTextIcon from "@/assets/HelperTextIcon";
 import CurrencyField from "./components/CurrencyField";
 import TextListField from "./components/TextListField";
@@ -68,7 +72,20 @@ function OptionalIndicator() {
   );
 }
 
-export default function Field({
+export default function FieldWrapper(props: FieldProps) {
+  const formContext = useForm(props.name);
+
+  return (
+    <Field
+      {...props}
+      error={formContext?.error}
+      isTouched={formContext?.isTouched}
+      registerField={formContext?.registerField}
+    />
+  );
+}
+
+const Field = memo(function Field({
   id,
   name,
   tooltipText,
@@ -76,21 +93,24 @@ export default function Field({
   isOptional = false,
   isDisabled = false,
   helperText,
+  error,
+  isTouched,
+  registerField,
   ...rest
-}: FieldProps): ReactElement {
-  const formContext = useForm(name);
+}: FieldComponentProps): ReactElement {
+  console.log("render", name);
 
   useEffect(() => {
-    if (!formContext) {
+    if (!registerField) {
       return;
     }
 
-    formContext.registerField({
+    registerField({
       name,
       type: rest.type,
       isRequired: !isOptional,
     });
-  }, [name, rest.type, isOptional, formContext]);
+  }, [name, rest.type, isOptional, registerField]);
 
   const formControlProps = ((): FormControlProps => {
     if (isOptional) {
@@ -128,7 +148,7 @@ export default function Field({
     <FormControl
       id={id ?? name}
       isDisabled={isDisabled}
-      isInvalid={Boolean(formContext?.error && formContext?.isTouched)}
+      isInvalid={Boolean(error && isTouched)}
       {...formControlProps}
     >
       <FormLabel
@@ -158,11 +178,11 @@ export default function Field({
       </FormLabel>
       <FieldComponent name={name} {...rest} />
       {/* eslint-disable-next-line no-nested-ternary */}
-      {formContext?.error && formContext?.isTouched ? (
-        <FormErrorMessage>{formContext.error}</FormErrorMessage>
+      {error && isTouched ? (
+        <FormErrorMessage>{error}</FormErrorMessage>
       ) : helperText ? (
         <FormHelperText>{helperText}</FormHelperText>
       ) : null}
     </FormControl>
   );
-}
+});

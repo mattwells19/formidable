@@ -7,6 +7,7 @@ import type { RadioGroupFieldProps } from "./components/RadioGroupField";
 import type { CurrencyFieldProps } from "./components/CurrencyField";
 import type { TextListFieldProps } from "./components/TextListField";
 import { DateFieldProps } from "./components/DateField";
+import { UseFormResult } from "./contexts/FormContext";
 
 export type FormElement = {
   name: string;
@@ -57,6 +58,8 @@ export type FieldSpecificProps =
   | DateFieldProps;
 
 export type FieldProps = CommonFieldProps & FieldSpecificProps;
+
+export type FieldComponentProps = FieldProps & Partial<UseFormResult>;
 
 export type OmitOverlap<ExtendedProps, A extends string = ""> = Omit<
   ExtendedProps,

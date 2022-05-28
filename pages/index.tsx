@@ -110,6 +110,8 @@ function useFormValidation(isOpen: boolean) {
   }, [isOpen]);
 }
 
+const getRadioOptionLabel = (option: string) => option.toUpperCase();
+
 export default function App() {
   const [key, reset] = useReducer((prev) => !prev, true);
   const [ignoreTouch, toggleIgnoreTouch] = useReducer((prev) => !prev, false);
@@ -120,6 +122,14 @@ export default function App() {
 
   const handleSubmit = (formValues: FormValues) => {
     setValues(formValues);
+  };
+
+  const handleCheckboxWithOtherChange = (values: string[]) => {
+    if (values.includes("Other") && !isOpen) {
+      onOpen();
+    } else if (!values.includes("Other") && isOpen) {
+      onClose();
+    }
   };
 
   return (
@@ -178,13 +188,7 @@ export default function App() {
                   options={bookOptions}
                   name="checkbox"
                   label="Checkbox group with Other"
-                  onChange={(values) => {
-                    if (values.includes("Other") && !isOpen) {
-                      onOpen();
-                    } else if (!values.includes("Other") && isOpen) {
-                      onClose();
-                    }
-                  }}
+                  onChange={handleCheckboxWithOtherChange}
                 />
                 {isOpen ? (
                   <Field
@@ -206,7 +210,7 @@ export default function App() {
                   name="radio"
                   label="Radio group"
                   options={foodOptions}
-                  getOptionLabel={(option) => option.toUpperCase()}
+                  getOptionLabel={getRadioOptionLabel}
                 />
                 <Field
                   type="multi-select"
