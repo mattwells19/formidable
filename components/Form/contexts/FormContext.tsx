@@ -10,7 +10,7 @@ interface FormContextValue {
 
 const FormContext = createContext<FormContextValue | null>(null);
 
-interface UseFormResult {
+export interface UseFormResult {
   registerField: (formField: FormElement) => void;
   error: string | undefined;
   isTouched: boolean;
