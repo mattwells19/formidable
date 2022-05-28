@@ -4,7 +4,8 @@ import type { SelectFieldProps } from "./components/SelectField";
 import type { TextareaFieldProps } from "./components/TextareaField";
 import type { CheckboxGroupFieldProps } from "./components/CheckboxGroupField";
 import type { RadioGroupFieldProps } from "./components/RadioGroupField";
-import { CurrencyFieldProps } from "./components/CurrencyField";
+import type { CurrencyFieldProps } from "./components/CurrencyField";
+import type { TextListFieldProps } from "./components/TextListField";
 
 export type FormElement = {
   name: string;
@@ -49,7 +50,8 @@ export type FieldSpecificProps =
   | TextareaFieldProps
   | CheckboxGroupFieldProps
   | RadioGroupFieldProps
-  | CurrencyFieldProps;
+  | CurrencyFieldProps
+  | TextListFieldProps;
 
 export type FieldProps = CommonFieldProps & FieldSpecificProps;
 

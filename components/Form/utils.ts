@@ -25,12 +25,22 @@ export function extractFormValues(
           ),
         };
       case "toggle-checkbox":
-      case "multi-select":
         return {
           ...acc,
           [field.name]: formDataObj
             .getAll(field.name)
             .map((item) => item.toString()),
+        };
+      case "multi-select":
+        const inputValue = formDataObj.getAll(field.name)[0].toString();
+        const value =
+          inputValue.length > 0
+            ? inputValue.split(",").map((item) => item.toString())
+            : [];
+
+        return {
+          ...acc,
+          [field.name]: value,
         };
       default:
         return acc;

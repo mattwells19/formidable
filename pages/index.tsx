@@ -27,6 +27,7 @@ type FormValues = {
   checkbox: Array<string>;
   radio: string;
   limitedCheckbox: Array<string>;
+  textList: Array<string>;
   dependentInput?: string;
 };
 
@@ -35,19 +36,23 @@ function useFormValidation(isOpen: boolean) {
 
   return useMemo(() => {
     const formValidationNoOther = zod.object({
-      textInput: zod.string({
-        required_error: formatMessage({ id: "fieldIsRequired" }),
+      textInput: zod.string().min(1, {
+        message: formatMessage({ id: "fieldIsRequired" }),
       }),
       currency: zod
         .number({
-          required_error: formatMessage({ id: "fieldIsRequired" }),
+          invalid_type_error: formatMessage({ id: "fieldIsRequired" }),
         })
         .min(250000, {
           message: formatMessage({ id: "min250k" }),
         }),
-      numberInput: zod.number({
-        required_error: formatMessage({ id: "fieldIsRequired" }),
-      }),
+      numberInput: zod
+        .number({
+          invalid_type_error: formatMessage({ id: "fieldIsRequired" }),
+        })
+        .min(0, {
+          message: formatMessage({ id: "notNegative" }),
+        }),
       optionalInput: zod.string().optional(),
       textArea: zod
         .string()
@@ -58,18 +63,27 @@ function useFormValidation(isOpen: boolean) {
           message: formatMessage({ id: "max500Chars" }),
         }),
       checkbox: zod
-        .string({
-          required_error: formatMessage({ id: "fieldIsRequired" }),
-        })
-        .array(),
+        .string()
+        .array()
+        .min(1, {
+          message: formatMessage({ id: "fieldIsRequired" }),
+        }),
       limitedCheckbox: zod
-        .string({
-          required_error: formatMessage({ id: "fieldIsRequired" }),
+        .string()
+        .array()
+        .min(1, {
+          message: formatMessage({ id: "fieldIsRequired" }),
         })
-        .array(),
+        .max(2),
       radio: zod.string({
         required_error: formatMessage({ id: "fieldIsRequired" }),
       }),
+      textList: zod
+        .string({
+          required_error: formatMessage({ id: "fieldIsRequired" }),
+        })
+        .array()
+        .min(1),
     });
 
     const formValidationWithOther = formValidationNoOther.merge(
@@ -118,7 +132,12 @@ export default function App() {
             {(formValidationState) => (
               <>
                 <Field type="text" name="textInput" label="Basic text" />
-                <Field type="currency" name="currency" label="Currency field" />
+                <Field
+                  type="currency"
+                  name="currency"
+                  label="Currency field"
+                  helperText="Min of $250k"
+                />
                 <Field
                   type="number"
                   name="numberInput"
@@ -140,6 +159,7 @@ export default function App() {
                   label="Text area field"
                   helperText="Min 10 characters"
                   minLength={10}
+                  maxLength={500}
                 />
                 <Field
                   type="toggle-checkbox"
@@ -175,6 +195,12 @@ export default function App() {
                   label="Radio group"
                   options={foodOptions}
                   getOptionLabel={(option) => option.toUpperCase()}
+                />
+                <Field
+                  type="multi-select"
+                  name="textList"
+                  label="Text list"
+                  helperText="Separate by commas."
                 />
                 <Button
                   disabled={formValidationState !== "complete"}

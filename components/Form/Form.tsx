@@ -13,7 +13,7 @@ import {
 import type { ZodObject, ZodRawShape } from "zod";
 import zod from "zod";
 import { FormContextProvider } from "./contexts/FormContext";
-import DebugForm from "./DebugForm";
+import DebugForm from "../DebugForm";
 import type { FormValidationState, FormElement } from "./types";
 import { extractFormValues } from "./utils";
 

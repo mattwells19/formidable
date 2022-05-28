@@ -19,6 +19,7 @@ import RadioGroupField from "./components/RadioGroupField";
 import type { FieldProps, FieldSpecificProps } from "./types";
 // import HelperTextIcon from "@/assets/HelperTextIcon";
 import CurrencyField from "./components/CurrencyField";
+import TextListField from "./components/TextListField";
 
 function FieldComponent(props: FieldSpecificProps): ReactElement | null {
   switch (props.type) {
@@ -42,6 +43,9 @@ function FieldComponent(props: FieldSpecificProps): ReactElement | null {
     }
     case "currency": {
       return <CurrencyField {...props} />;
+    }
+    case "multi-select": {
+      return <TextListField {...props} />;
     }
     default:
       return null;

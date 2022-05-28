@@ -7,9 +7,10 @@ import {
   StatLabel,
   StatNumber,
   Heading,
+  StatHelpText,
 } from "@chakra-ui/react";
 import { FC, useEffect, useReducer, useRef } from "react";
-import { FormElement, FormValidationState } from "./types";
+import { FormElement, FormValidationState } from "./Form/types";
 
 interface IDebugFormProps {
   fields: Array<FormElement>;
@@ -83,6 +84,10 @@ const DebugForm: FC<IDebugFormProps> = ({
           <Code>
             <pre>{JSON.stringify(Array.from(touchedFields), undefined, 2)}</pre>
           </Code>
+          <StatHelpText>
+            Names prefixed with &apos;formatted_&apos; use a dummy controlled
+            input for display purposes and a hidden input for the actual value.
+          </StatHelpText>
         </Stat>
       </StatGroup>
     </Box>
