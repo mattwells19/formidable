@@ -57,6 +57,7 @@ export default function RadioGroupField({
           key={option}
           myvalue={option}
           {...getRadioProps({ value: option })}
+          id={`${name}-${option}`}
           name={name}
           getOptionLabel={getOptionLabel}
         />

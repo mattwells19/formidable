@@ -69,6 +69,7 @@ export default function CheckboxGroupField({
           {...getCheckboxProps({
             value: option,
           })}
+          id={`${name}-${option}`}
           isDisabled={Boolean(
             limit && groupValue.length === limit && !groupValue.includes(option)
           )}

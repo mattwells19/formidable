@@ -231,7 +231,14 @@ export default function App() {
                   Submit
                 </Button>
                 <ButtonGroup variant="outline">
-                  <Button onClick={reset}>Reset</Button>
+                  <Button
+                    onClick={() => {
+                      reset();
+                      onClose();
+                    }}
+                  >
+                    Reset
+                  </Button>
                   <Button onClick={toggleIgnoreTouch}>
                     Ignore touch: {`${ignoreTouch}`}
                   </Button>

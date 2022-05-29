@@ -31,7 +31,14 @@ const CurrencyField = ({
   return (
     <InputGroup>
       <InputLeftElement pointerEvents="none">$</InputLeftElement>
-      <input name={name} type="number" hidden readOnly ref={hiddenInputRef} />
+      <input
+        aria-label={name}
+        name={name}
+        type="number"
+        hidden
+        readOnly
+        ref={hiddenInputRef}
+      />
       <Input
         width={{ base: "full", md: "50%" }}
         {...props}

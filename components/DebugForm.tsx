@@ -66,22 +66,26 @@ const DebugForm: FC<IDebugFormProps> = ({
         </Stat>
         <Stat>
           <StatLabel>Validation State</StatLabel>
-          <Code>
-            <pre>{formValidationState}</pre>
-          </Code>
+          <StatNumber>
+            <Code>
+              <pre>{formValidationState}</pre>
+            </Code>
+          </StatNumber>
         </Stat>
         <Stat>
           <StatLabel>Form Values</StatLabel>
           {formRef.current ? (
-            <Code>
-              <pre>
-                {JSON.stringify(
-                  extractFormValues(fields, new FormData(formRef.current)),
-                  undefined,
-                  2
-                )}
-              </pre>
-            </Code>
+            <StatNumber>
+              <Code>
+                <pre>
+                  {JSON.stringify(
+                    extractFormValues(fields, new FormData(formRef.current)),
+                    undefined,
+                    2
+                  )}
+                </pre>
+              </Code>
+            </StatNumber>
           ) : null}
           <StatHelpText>
             Uses ref so only updates on re-renders. Click the Reset button to
@@ -90,9 +94,13 @@ const DebugForm: FC<IDebugFormProps> = ({
         </Stat>
         <Stat>
           <StatLabel>Touched</StatLabel>
-          <Code>
-            <pre>{JSON.stringify(Array.from(touchedFields), undefined, 2)}</pre>
-          </Code>
+          <StatNumber>
+            <Code>
+              <pre>
+                {JSON.stringify(Array.from(touchedFields), undefined, 2)}
+              </pre>
+            </Code>
+          </StatNumber>
           <StatHelpText>
             Names prefixed with &apos;formatted_&apos; use a dummy controlled
             input for display purposes and a hidden input for the actual value.
@@ -100,15 +108,21 @@ const DebugForm: FC<IDebugFormProps> = ({
         </Stat>
         <Stat>
           <StatLabel>Registered Fields</StatLabel>
-          <Code>
-            <pre>{JSON.stringify(fields, undefined, 2)}</pre>
-          </Code>
+          <StatNumber>
+            <Code>
+              <pre>{JSON.stringify(fields, undefined, 2)}</pre>
+            </Code>
+          </StatNumber>
         </Stat>
         <Stat>
           <StatLabel>Errors</StatLabel>
-          <Code>
-            <pre>{JSON.stringify(Array.from(formErrorMap), undefined, 2)}</pre>
-          </Code>
+          <StatNumber>
+            <Code>
+              <pre>
+                {JSON.stringify(Array.from(formErrorMap), undefined, 2)}
+              </pre>
+            </Code>
+          </StatNumber>
         </Stat>
       </StatGroup>
     </Box>

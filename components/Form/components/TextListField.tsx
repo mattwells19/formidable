@@ -22,60 +22,72 @@ export default function TextListField({
   );
   const hiddenInputRef = useRef<HTMLInputElement | null>(null);
 
-  const inputValues = listValues.join(", ");
+  // ref to keep the user's raw input even if they lose focus
+  const inputValueRef = useRef<string>(
+    listValues.length > 0 ? listValues.join(", ") : ""
+  );
 
   return (
     <>
-      <Input
-        {...inputProps}
-        ref={(ref) => ref?.focus()}
-        onChange={(e) => {
-          const inputValue = e.target.value.trim();
-          let finalValue: Array<string> | null = null;
+      {isOpen ? (
+        <Input
+          {...inputProps}
+          ref={(ref) => ref?.focus()}
+          onChange={(e) => {
+            inputValueRef.current = e.target.value;
+            const inputValue = e.target.value.trim();
+            let finalValue: Array<string> | null = null;
 
-          if (inputValue === "") {
-            finalValue = [];
-          } else if (inputValue.includes(",")) {
-            finalValue = inputValue
-              .split(",")
-              .map((v) => v.trim())
-              .filter((v) => v.length > 0);
-          } else {
-            finalValue = [inputValue];
-          }
+            if (inputValue === "") {
+              finalValue = [];
+            } else if (inputValue.includes(",")) {
+              finalValue = inputValue
+                .split(",")
+                .map((v) => v.trim())
+                .filter((v) => v.length > 0);
+            } else {
+              finalValue = [inputValue];
+            }
 
-          if (hiddenInputRef.current) {
-            hiddenInputRef.current.value = finalValue.join(",");
-          }
+            if (hiddenInputRef.current) {
+              hiddenInputRef.current.value = finalValue.join(",");
+            }
 
-          setListValues(finalValue);
-          onChange?.(finalValue);
-        }}
-        onBlur={(e) => {
-          onClose();
-          onBlur?.(e);
-        }}
-        hidden={!isOpen}
-        defaultValue={inputValues}
-        name={`formatted_${name}`}
+            setListValues(finalValue);
+            onChange?.(finalValue);
+          }}
+          onBlur={(e) => {
+            onClose();
+            onBlur?.(e);
+          }}
+          defaultValue={inputValueRef.current}
+          name={`formatted_${name}`}
+        />
+      ) : (
+        <Input
+          as="button"
+          onClick={onOpen}
+          onFocus={onOpen}
+          alignItems="center"
+          paddingY="1"
+          paddingX="1.5"
+          display="flex"
+          gap="1"
+          title={`Edit ${inputValueRef.current}`.trim()}
+          name={`formatted_${name}`}
+        >
+          {listValues.map((v) => (
+            <Tag key={v}>{v}</Tag>
+          ))}
+        </Input>
+      )}
+      <input
+        aria-label={name}
+        ref={hiddenInputRef}
+        readOnly
+        hidden
+        name={name}
       />
-      <Input
-        as="button"
-        onClick={onOpen}
-        onFocus={onOpen}
-        hidden={isOpen}
-        alignItems="center"
-        padding="1"
-        display="flex"
-        gap="1"
-        title={`Edit ${inputValues}`}
-        name={`formatted_${name}`}
-      >
-        {listValues.map((v) => (
-          <Tag key={v}>{v}</Tag>
-        ))}
-      </Input>
-      <input ref={hiddenInputRef} readOnly hidden name={name} />
     </>
   );
 }

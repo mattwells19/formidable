@@ -124,10 +124,12 @@ const Field = memo(function Field({
         return {
           isRequired: false,
           as: "fieldset",
+          id,
         };
       default:
         return {
           isRequired: true,
+          id: name ?? id,
         };
     }
   })();
@@ -146,7 +148,6 @@ const Field = memo(function Field({
 
   return (
     <FormControl
-      id={id ?? name}
       isDisabled={isDisabled}
       isInvalid={Boolean(error && isTouched)}
       {...formControlProps}
