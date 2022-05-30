@@ -63,8 +63,6 @@ export default function Custom() {
         display="flex"
         flexDir="column"
         gap="8"
-        justifyContent="flex-start"
-        marginY="4"
         showDebugForm
       >
         {(formValidationState) => (

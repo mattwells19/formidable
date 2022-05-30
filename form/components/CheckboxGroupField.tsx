@@ -61,7 +61,12 @@ export default function CheckboxGroupField({
   });
 
   return (
-    <Flex justifyContent="space-evenly" gap="2" {...containerProps}>
+    <Flex
+      justifyContent="space-evenly"
+      gap="2"
+      flexWrap="wrap"
+      {...containerProps}
+    >
       {options.map((option) => (
         <ToggleCheckbox
           key={option}

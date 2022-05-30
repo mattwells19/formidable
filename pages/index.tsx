@@ -41,7 +41,9 @@ function useFormValidation() {
         }),
       limitedCheckbox: zu.multiSelect().max(2),
       radio: zu.singleSelect(),
-      textList: zu.multiSelect(),
+      textList: zu.multiSelect().min(2, {
+        message: formatMessage({ id: "needX" }, { x: 2 }),
+      }),
       date: zu
         .date()
         .refine((val) => getUTCDate(val).getTime() < getUTCDate().getTime(), {
@@ -142,12 +144,10 @@ export default function App() {
         onSubmit={handleSubmit}
         validationShape={formValidation}
         ignoreTouch={ignoreTouch}
+        showDebugForm
         display="flex"
         flexDir="column"
         gap="8"
-        justifyContent="flex-start"
-        marginY="4"
-        showDebugForm
       >
         {(formValidationState) => (
           <>

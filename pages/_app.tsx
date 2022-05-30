@@ -8,6 +8,7 @@ const messages = {
   fieldIsRequired: "Field is required",
   min250k: "Must be at least $250k",
   notNegative: "Cannot be negative.",
+  needX: "Need at least {x}.",
   min10Chars: "Must be at least 10 characters.",
   max500Chars: "No more than 500 characters.",
   mustBeInThePast: "Date must be in the past.",
@@ -22,8 +23,8 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <IntlProvider locale="en-US" messages={messages}>
         <ChakraProvider>
-          <Box marginY="10" padding="9" margin="auto">
-            <Box as="header" maxWidth="container.lg" margin="auto">
+          <Flex flexDir="column" padding="9" gap="5" alignItems="center">
+            <Box as="header" maxWidth="container.lg" width="full">
               <Heading as="h1" textAlign="center">
                 Formidable
               </Heading>
@@ -39,7 +40,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             >
               <Component {...pageProps} />
             </Flex>
-          </Box>
+          </Flex>
         </ChakraProvider>
       </IntlProvider>
     </>

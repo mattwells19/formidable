@@ -51,7 +51,12 @@ export default function RadioGroupField({
   });
 
   return (
-    <Flex justifyContent="space-evenly" gap="2" {...containerProps}>
+    <Flex
+      justifyContent="space-evenly"
+      flexWrap="wrap"
+      gap="2"
+      {...containerProps}
+    >
       {options.map((option) => (
         <ToggleRadio
           key={option}
