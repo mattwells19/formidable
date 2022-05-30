@@ -51,6 +51,12 @@ export function extractFormValues(
           [field.name]: value ? new Date(value) : null,
         };
       }
+      case "switch": {
+        return {
+          ...acc,
+          [field.name]: formDataObj.get(field.name) !== null,
+        };
+      }
       default:
         return acc;
     }

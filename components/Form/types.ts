@@ -6,8 +6,9 @@ import type { CheckboxGroupFieldProps } from "./components/CheckboxGroupField";
 import type { RadioGroupFieldProps } from "./components/RadioGroupField";
 import type { CurrencyFieldProps } from "./components/CurrencyField";
 import type { TextListFieldProps } from "./components/TextListField";
-import { DateFieldProps } from "./components/DateField";
-import { UseFormResult } from "./contexts/FormContext";
+import type { DateFieldProps } from "./components/DateField";
+import type { UseFormResult } from "./contexts/FormContext";
+import type { SwitchProps } from "./components/SwitchField";
 
 export type FormElement = {
   name: string;
@@ -26,7 +27,8 @@ export type FieldType =
   | "toggle-radio"
   | "toggle-checkbox"
   | "textarea"
-  | "date";
+  | "date"
+  | "switch";
 
 export type CommonFieldProps = {
   name: string;
@@ -36,7 +38,6 @@ export type CommonFieldProps = {
   isOptional?: boolean;
   isDisabled?: boolean;
   helperText?: string;
-  ignoreTouch?: boolean;
 };
 
 export type CommonFieldSpecificProps<T> = {
@@ -55,7 +56,8 @@ export type FieldSpecificProps =
   | RadioGroupFieldProps
   | CurrencyFieldProps
   | TextListFieldProps
-  | DateFieldProps;
+  | DateFieldProps
+  | SwitchProps;
 
 export type FieldProps = CommonFieldProps & FieldSpecificProps;
 

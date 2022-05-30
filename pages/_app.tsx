@@ -1,7 +1,8 @@
 import type { AppProps } from "next/app";
-import { ChakraProvider } from "@chakra-ui/react";
+import { Box, ChakraProvider, Divider, Flex, Heading } from "@chakra-ui/react";
 import Head from "next/head";
 import { IntlProvider } from "react-intl";
+import Nav from "../components/Nav";
 
 const messages = {
   fieldIsRequired: "Field is required",
@@ -21,7 +22,24 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <IntlProvider locale="en-US" messages={messages}>
         <ChakraProvider>
-          <Component {...pageProps} />
+          <Box marginY="10" width="fit-content" padding="9" margin="auto">
+            <Box as="header">
+              <Heading as="h1" textAlign="center">
+                Formidable
+              </Heading>
+              <Divider marginY="5" />
+              <Nav />
+            </Box>
+            <Flex
+              as="main"
+              flexWrap="wrap"
+              gap="20"
+              paddingTop="5"
+              justifyContent="center"
+            >
+              <Component {...pageProps} />
+            </Flex>
+          </Box>
         </ChakraProvider>
       </IntlProvider>
     </>

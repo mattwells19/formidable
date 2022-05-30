@@ -28,6 +28,7 @@ import CurrencyField from "./components/CurrencyField";
 import TextListField from "./components/TextListField";
 import DateField from "./components/DateField";
 import { useIntl } from "react-intl";
+import SwitchField from "./components/SwitchField";
 
 function FieldComponent(props: FieldSpecificProps): ReactElement | null {
   switch (props.type) {
@@ -57,6 +58,9 @@ function FieldComponent(props: FieldSpecificProps): ReactElement | null {
     }
     case "date": {
       return <DateField {...props} />;
+    }
+    case "switch": {
+      return <SwitchField {...props} />;
     }
     default:
       return null;

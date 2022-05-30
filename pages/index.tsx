@@ -1,23 +1,10 @@
-import {
-  Button,
-  useDisclosure,
-  ButtonGroup,
-  Heading,
-  Divider,
-  Flex,
-  Box,
-} from "@chakra-ui/react";
-import Form, { Field } from "../components/Form";
+import { Button, ButtonGroup } from "@chakra-ui/react";
+import Form, { Field, FieldProps } from "../components/Form";
 import zod from "zod";
 import { useMemo, useReducer, useState } from "react";
 import { useIntl } from "react-intl";
 import FormSubmissionModal from "../components/FormSubmissionModal";
 import { getUTCDate } from "../components/Form/utils";
-
-const movieOptions = ["The Peanut Butter Falcon", "Harry Potter", "Arrival"];
-const bookOptions = ["Anxious People", "Martyn Pig", "Lucas", "Other"];
-const foodOptions = ["Pizza", "Burger", "Salmon", "Anything else"];
-const colorOptions = ["Blue", "Orange", "Red", "Green"];
 
 type FormValues = {
   textInput: string;
@@ -25,19 +12,17 @@ type FormValues = {
   numberInput: number;
   optionalInput?: string;
   textArea: string;
-  checkbox: Array<string>;
   radio: string;
   limitedCheckbox: Array<string>;
   textList: Array<string>;
   date: Date;
-  dependentInput?: string;
 };
 
-function useFormValidation(isOpen: boolean) {
+function useFormValidation() {
   const { formatMessage } = useIntl();
 
   return useMemo(() => {
-    const formValidationNoOther = zod.object({
+    const formValidation = zod.object({
       textInput: zod.string().min(1, {
         message: formatMessage({ id: "fieldIsRequired" }),
       }),
@@ -63,12 +48,6 @@ function useFormValidation(isOpen: boolean) {
         })
         .max(500, {
           message: formatMessage({ id: "max500Chars" }),
-        }),
-      checkbox: zod
-        .string()
-        .array()
-        .min(1, {
-          message: formatMessage({ id: "fieldIsRequired" }),
         }),
       limitedCheckbox: zod
         .string()
@@ -98,156 +77,116 @@ function useFormValidation(isOpen: boolean) {
         }),
     });
 
-    const formValidationWithOther = formValidationNoOther.merge(
-      zod.object({
-        dependentInput: zod.string({
-          required_error: formatMessage({ id: "fieldIsRequired" }),
-        }),
-      })
-    );
-
-    return isOpen ? formValidationWithOther : formValidationNoOther;
-  }, [isOpen]);
+    return formValidation;
+  }, []);
 }
 
-const getRadioOptionLabel = (option: string) => option.toUpperCase();
+const fields: Array<FieldProps> = [
+  {
+    type: "text",
+    name: "textInput",
+    label: "Basic text",
+  },
+  {
+    type: "number",
+    name: "numberInput",
+    label: "Numbers only",
+    tooltipText: "Has to be positive",
+    min: 0,
+  },
+  {
+    type: "select",
+    name: "optionalInput",
+    label: "Optional select",
+    isOptional: true,
+    options: ["The Peanut Butter Falcon", "Harry Potter", "Arrival"],
+    placeholder: "Make a selection",
+  },
+  {
+    type: "textarea",
+    name: "textArea",
+    label: "Text area field",
+    helperText: "Min 10 characters",
+    minLength: 10,
+    maxLength: 500,
+  },
+  {
+    type: "toggle-checkbox",
+    options: ["Blue", "Orange", "Red", "Green"],
+    name: "limitedCheckbox",
+    label: "Limited checkbox group",
+    helperText: "Select up to 2",
+    limit: 2,
+  },
+  {
+    type: "toggle-radio",
+    name: "radio",
+    label: "Radio group",
+    options: ["Pizza", "Burger", "Salmon", "Anything else"],
+    getOptionLabel: (option) => option.toUpperCase(),
+  },
+  {
+    type: "multi-select",
+    name: "textList",
+    label: "Text list",
+    helperText: "Separate by commas.",
+  },
+  {
+    type: "date",
+    name: "date",
+    label: "Date field",
+    helperText: "Cannot be today.",
+  },
+];
 
 export default function App() {
   const [key, reset] = useReducer((prev) => !prev, true);
   const [ignoreTouch, toggleIgnoreTouch] = useReducer((prev) => !prev, false);
   const [values, setValues] = useState<FormValues | null>(null);
 
-  const { onOpen, isOpen, onClose } = useDisclosure();
-  const formValidation = useFormValidation(isOpen);
+  const formValidation = useFormValidation();
 
   const handleSubmit = (formValues: FormValues) => {
     setValues(formValues);
   };
 
-  const handleCheckboxWithOtherChange = (values: string[]) => {
-    if (values.includes("Other") && !isOpen) {
-      onOpen();
-    } else if (!values.includes("Other") && isOpen) {
-      onClose();
-    }
-  };
-
   return (
     <>
-      <Box marginY="10" width="fit-content" padding="9" margin="auto">
-        <Heading as="h1" textAlign="center">
-          Formidable
-        </Heading>
-        <Divider marginY="5" />
-        <Flex flexWrap="wrap" gap="20" justifyContent="center">
-          <Form
-            key={`${key}`}
-            onSubmit={handleSubmit}
-            validationShape={formValidation}
-            ignoreTouch={ignoreTouch}
-            display="flex"
-            flexDir="column"
-            gap="8"
-            justifyContent="flex-start"
-            marginY="4"
-          >
-            {(formValidationState) => (
-              <>
-                <Field type="text" name="textInput" label="Basic text" />
-                <Field
-                  type="currency"
-                  name="currency"
-                  label="Currency field"
-                  helperText="Min of $250k"
-                />
-                <Field
-                  type="number"
-                  name="numberInput"
-                  label="Numbers only"
-                  tooltipText="Has to be positive"
-                  min={0}
-                />
-                <Field
-                  type="select"
-                  name="optionalInput"
-                  label="Optional select"
-                  isOptional
-                  options={movieOptions}
-                  placeholder="Make a selection"
-                />
-                <Field
-                  type="textarea"
-                  name="textArea"
-                  label="Text area field"
-                  helperText="Min 10 characters"
-                  minLength={10}
-                  maxLength={500}
-                />
-                <Field
-                  type="toggle-checkbox"
-                  options={bookOptions}
-                  name="checkbox"
-                  label="Checkbox group with Other"
-                  onChange={handleCheckboxWithOtherChange}
-                />
-                {isOpen ? (
-                  <Field
-                    type="text"
-                    name="dependentInput"
-                    label="Other input"
-                  />
-                ) : null}
-                <Field
-                  type="toggle-checkbox"
-                  options={colorOptions}
-                  name="limitedCheckbox"
-                  label="Limited checkbox group"
-                  helperText="Select up to 2"
-                  limit={2}
-                />
-                <Field
-                  type="toggle-radio"
-                  name="radio"
-                  label="Radio group"
-                  options={foodOptions}
-                  getOptionLabel={getRadioOptionLabel}
-                />
-                <Field
-                  type="multi-select"
-                  name="textList"
-                  label="Text list"
-                  helperText="Separate by commas."
-                />
-                <Field
-                  type="date"
-                  name="date"
-                  label="Date field"
-                  helperText="Cannot be today."
-                />
-                <Button
-                  disabled={formValidationState !== "complete"}
-                  type="submit"
-                >
-                  Submit
-                </Button>
-                <ButtonGroup variant="outline">
-                  <Button
-                    onClick={() => {
-                      reset();
-                      onClose();
-                    }}
-                  >
-                    Reset
-                  </Button>
-                  <Button onClick={toggleIgnoreTouch}>
-                    Ignore touch: {`${ignoreTouch}`}
-                  </Button>
-                </ButtonGroup>
-              </>
-            )}
-          </Form>
-        </Flex>
-      </Box>
+      <Form
+        key={`${key}`}
+        onSubmit={handleSubmit}
+        validationShape={formValidation}
+        ignoreTouch={ignoreTouch}
+        display="flex"
+        flexDir="column"
+        gap="8"
+        justifyContent="flex-start"
+        marginY="4"
+        showDebugForm
+      >
+        {(formValidationState) => (
+          <>
+            {fields.map((fieldProps) => (
+              <Field key={fieldProps.name} {...fieldProps} />
+            ))}
+            <Button disabled={formValidationState !== "complete"} type="submit">
+              Submit
+            </Button>
+            <ButtonGroup variant="outline">
+              <Button
+                onClick={() => {
+                  reset();
+                }}
+              >
+                Reset
+              </Button>
+              <Button onClick={toggleIgnoreTouch}>
+                Ignore touch: {`${ignoreTouch}`}
+              </Button>
+            </ButtonGroup>
+          </>
+        )}
+      </Form>
       <FormSubmissionModal
         formValues={values}
         onClose={() => setValues(null)}

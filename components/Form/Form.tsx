@@ -26,6 +26,7 @@ export interface FormProps<FormValues extends ZodRawShape = {}>
     | ((formValidationState: FormValidationState) => ReactNode);
   validationShape: ZodObject<FormValues>;
   ignoreTouch?: boolean;
+  showDebugForm?: boolean;
 }
 
 export default function Form<FormValues extends ZodRawShape>({
@@ -33,6 +34,7 @@ export default function Form<FormValues extends ZodRawShape>({
   onSubmit,
   validationShape,
   ignoreTouch = false,
+  showDebugForm = false,
   ...rest
 }: FormProps<FormValues>): ReactElement {
   const [fields, setFields] = useState<Array<FormElement>>([]);
@@ -198,13 +200,15 @@ export default function Form<FormValues extends ZodRawShape>({
           ? children(formValidationState)
           : children}
       </chakra.form>
-      <DebugForm
-        fields={fields}
-        formErrorMap={formErrorMap}
-        touchedFields={touchedFields}
-        formValidationState={formValidationState}
-        formRef={formRef}
-      />
+      {showDebugForm ? (
+        <DebugForm
+          fields={fields}
+          formErrorMap={formErrorMap}
+          touchedFields={touchedFields}
+          formValidationState={formValidationState}
+          formRef={formRef}
+        />
+      ) : null}
     </FormContextProvider>
   );
 }

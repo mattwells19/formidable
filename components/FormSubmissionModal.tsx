@@ -28,7 +28,7 @@ const FormSubmissionModal: FC<IFormSubmissionModalProps> = ({
       <ModalContent>
         <ModalHeader>Final Form Values</ModalHeader>
         <ModalCloseButton />
-        <ModalBody padding="5">
+        <ModalBody paddingX="5" paddingBottom="5">
           <Code width="full">
             <pre>{JSON.stringify(formValues, undefined, 2)}</pre>
           </Code>
