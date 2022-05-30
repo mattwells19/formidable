@@ -10,8 +10,8 @@ import {
   StatHelpText,
 } from "@chakra-ui/react";
 import { FC, MutableRefObject, useEffect, useReducer, useRef } from "react";
-import { FormElement, FormValidationState } from "./Form/types";
-import { extractFormValues } from "./Form/utils";
+import { FormElement, FormValidationState } from "../types";
+import { extractFormValues } from "../utils";
 
 interface IDebugFormProps {
   fields: Array<FormElement>;

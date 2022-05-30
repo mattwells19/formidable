@@ -1,11 +1,10 @@
 import { Button, ButtonGroup } from "@chakra-ui/react";
-import Form, { Field, FieldProps, FieldType } from "../components/Form";
+import Form, { Field, FieldProps, FieldType, useZodUtils } from "../form";
 import type { ZodTypeAny } from "zod";
 import { useMemo, useReducer, useState } from "react";
 import FormSubmissionModal from "../components/FormSubmissionModal";
-import { getUTCDate } from "../components/Form/utils";
+import { getUTCDate } from "../utils";
 import FieldEditor from "../components/FieldEditor";
-import useZodUtils from "../components/Form/zod-utils";
 
 type CustomFormValues = Record<
   string,
@@ -21,12 +20,12 @@ export default function Custom() {
       number: zu.number().min(0),
       textarea: zu.text().min(10).max(500),
       "toggle-checkbox": zu.multiSelect().max(2),
-      "toggle-radio": zu.text(),
+      "toggle-radio": zu.singleSelect(),
       "multi-select": zu.multiSelect(),
       date: zu
         .date()
         .refine((val) => getUTCDate(val).getTime() < getUTCDate().getTime()),
-      select: zu.text(),
+      select: zu.singleSelect(),
       switch: zu.switch(),
     }),
     [zu]

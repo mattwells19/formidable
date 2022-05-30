@@ -1,5 +1,6 @@
+import { memo, ReactElement, useEffect } from "react";
+import { useIntl } from "react-intl";
 import {
-  chakra,
   FormControl,
   FormControlProps,
   FormErrorMessage,
@@ -10,25 +11,25 @@ import {
   Icon,
   Text,
 } from "@chakra-ui/react";
-import { memo, ReactElement, useEffect } from "react";
-import { useForm } from "./contexts/FormContext";
-import TextField from "./components/TextField";
-import NumberField from "./components/NumberField";
-import SelectField from "./components/SelectField";
-import TextareaField from "./components/TextareaField";
-import CheckboxGroupField from "./components/CheckboxGroupField";
-import RadioGroupField from "./components/RadioGroupField";
+import { useFormField } from "./contexts/FormContext";
+
 import type {
   FieldComponentProps,
   FieldProps,
   FieldSpecificProps,
 } from "./types";
-// import HelperTextIcon from "@/assets/HelperTextIcon";
-import CurrencyField from "./components/CurrencyField";
-import TextListField from "./components/TextListField";
-import DateField from "./components/DateField";
-import { useIntl } from "react-intl";
-import SwitchField from "./components/SwitchField";
+import {
+  CheckboxGroupField,
+  CurrencyField,
+  DateField,
+  NumberField,
+  RadioGroupField,
+  SwitchField,
+  TextareaField,
+  TextField,
+  TextListField,
+  SelectField,
+} from "./components";
 
 function FieldComponent(props: FieldSpecificProps): ReactElement | null {
   switch (props.type) {
@@ -77,7 +78,7 @@ function OptionalIndicator() {
 }
 
 export default function FieldWrapper(props: FieldProps) {
-  const formContext = useForm(props.name);
+  const formContext = useFormField(props.name);
 
   return (
     <Field

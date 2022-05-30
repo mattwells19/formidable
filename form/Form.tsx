@@ -12,8 +12,8 @@ import {
 } from "react";
 import type { ZodObject, ZodRawShape } from "zod";
 import zod from "zod";
-import { FormContextProvider } from "./contexts/FormContext";
-import DebugForm from "../DebugForm";
+import { FormContextProvider, FormContextValue } from "./contexts/FormContext";
+import DebugForm from "./components/DebugForm";
 import type { FormValidationState, FormElement } from "./types";
 import { extractFormValues } from "./utils";
 
@@ -177,14 +177,21 @@ export default function Form<FormValues extends ZodRawShape>({
     }
   }, [fields.length]);
 
-  const contextValue = useMemo(
+  const contextValue: FormContextValue = useMemo(
     () => ({
       registerField,
       formErrorMap,
       touchedFields,
       ignoreTouch,
+      formValidationState,
     }),
-    [registerField, formErrorMap, touchedFields, ignoreTouch]
+    [
+      registerField,
+      formErrorMap,
+      touchedFields,
+      ignoreTouch,
+      formValidationState,
+    ]
   );
 
   return (

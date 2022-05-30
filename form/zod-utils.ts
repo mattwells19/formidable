@@ -2,24 +2,30 @@ import { useMemo } from "react";
 import { useIntl } from "react-intl";
 import zod from "zod";
 
-const useZodUtils = () => {
+export const useZodUtils = () => {
   const { formatMessage } = useIntl();
   const defaultRequiredMsg = formatMessage({ id: "fieldIsRequired" });
 
   return useMemo(() => {
-    const radio = () =>
-      zod.string().min(1, {
-        message: defaultRequiredMsg,
+    const singleSelect = () =>
+      zod.string({
+        required_error: defaultRequiredMsg,
       });
 
     const text = () =>
-      zod.string().trim().min(1, {
-        message: defaultRequiredMsg,
-      });
+      zod
+        .string({
+          required_error: defaultRequiredMsg,
+        })
+        .trim()
+        .min(1, {
+          message: defaultRequiredMsg,
+        });
 
     const number = () =>
       zod.number({
         invalid_type_error: defaultRequiredMsg,
+        required_error: defaultRequiredMsg,
       });
 
     const multiSelect = () =>
@@ -47,7 +53,7 @@ const useZodUtils = () => {
     const form = zod.object;
 
     return {
-      radio,
+      singleSelect,
       text,
       number,
       multiSelect,
@@ -57,5 +63,3 @@ const useZodUtils = () => {
     };
   }, [defaultRequiredMsg]);
 };
-
-export default useZodUtils;

@@ -9,9 +9,9 @@ import {
   ModalOverlay,
 } from "@chakra-ui/react";
 import { ReactElement, useReducer } from "react";
-import Form, { Field, FieldProps, FieldType } from "./Form";
+import Form, { Field, FieldProps, FieldType, useZodUtils } from "../form";
 import zod from "zod";
-import useZodUtils from "./Form/zod-utils";
+import { FormContextConsumer } from "../form/contexts/FormContext";
 
 interface FieldEditorProps {
   isOpen: boolean;

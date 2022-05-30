@@ -1,10 +1,9 @@
 import { Button, ButtonGroup } from "@chakra-ui/react";
-import Form, { Field, FieldProps } from "../components/Form";
 import { useMemo, useReducer, useState } from "react";
 import { useIntl } from "react-intl";
 import FormSubmissionModal from "../components/FormSubmissionModal";
-import { getUTCDate } from "../components/Form/utils";
-import useZodUtils from "../components/Form/zod-utils";
+import { getUTCDate } from "../utils";
+import Form, { useZodUtils, Field, FieldProps } from "../form";
 
 type FormValues = {
   textInput: string;
@@ -31,7 +30,7 @@ function useFormValidation() {
       numberInput: zu.number().min(0, {
         message: formatMessage({ id: "notNegative" }),
       }),
-      optionalInput: zu.text().optional(),
+      optionalInput: zu.singleSelect().optional(),
       textArea: zu
         .text()
         .min(10, {
@@ -41,7 +40,7 @@ function useFormValidation() {
           message: formatMessage({ id: "max500Chars" }),
         }),
       limitedCheckbox: zu.multiSelect().max(2),
-      radio: zu.radio(),
+      radio: zu.singleSelect(),
       textList: zu.multiSelect(),
       date: zu
         .date()
@@ -52,7 +51,7 @@ function useFormValidation() {
     });
 
     return formValidation;
-  }, []);
+  }, [formatMessage, zu]);
 }
 
 const fields: Array<FieldProps> = [
