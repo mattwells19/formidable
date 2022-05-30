@@ -6,15 +6,18 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import { ReactElement } from "react";
-import type { CommonFieldSpecificProps, OmitOverlap } from "../types";
+import type {
+  CommonFieldSpecificProps,
+  CommonOptionsProps,
+  OmitOverlap,
+} from "../types";
 import ToggleButton from "./ToggleButton";
 
 export interface RadioGroupFieldProps
   extends CommonFieldSpecificProps<string>,
+    CommonOptionsProps,
     OmitOverlap<Omit<RadioGroupProps, "children">> {
   type: "toggle-radio";
-  options: Array<string>;
-  getOptionLabel?: (option: string) => string;
 }
 
 interface ToggleRadioProps

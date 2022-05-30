@@ -36,6 +36,7 @@ export function extractFormValues(
             .map((item) => item.toString()),
         };
       }
+      case "autocomplete":
       case "multi-select": {
         const inputValue = formDataObj.getAll(field.name)[0].toString();
         const value =

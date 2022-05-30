@@ -11,7 +11,6 @@ import {
 import { ReactElement, useReducer } from "react";
 import Form, { Field, FieldProps, FieldType, useZodUtils } from "../form";
 import zod from "zod";
-import { FormContextConsumer } from "../form/contexts/FormContext";
 
 interface FieldEditorProps {
   isOpen: boolean;
@@ -30,6 +29,7 @@ const fieldTypesEnum = zod.enum([
   "textarea",
   "date",
   "switch",
+  "autocomplete",
 ]);
 
 const FieldEditor = ({
@@ -53,6 +53,7 @@ const FieldEditor = ({
       if (
         newFieldType === "select" ||
         newFieldType === "toggle-checkbox" ||
+        newFieldType === "autocomplete" ||
         newFieldType === "toggle-radio"
       ) {
         return {

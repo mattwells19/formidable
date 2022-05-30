@@ -1,10 +1,10 @@
-import { SwitchProps as ChakraSwitchProps, Switch } from "@chakra-ui/react";
+import { SwitchProps, Switch } from "@chakra-ui/react";
 import type { ReactElement } from "react";
 import type { CommonFieldSpecificProps, OmitOverlap } from "../types";
 
-export interface SwitchProps
+export interface SwitchFieldProps
   extends CommonFieldSpecificProps<boolean>,
-    OmitOverlap<ChakraSwitchProps> {
+    OmitOverlap<SwitchProps> {
   type: "switch";
 }
 
@@ -12,7 +12,7 @@ export default function SwitchField({
   value,
   defaultValue,
   ...switchProps
-}: SwitchProps): ReactElement {
+}: SwitchFieldProps): ReactElement {
   return (
     <Switch
       isChecked={value}

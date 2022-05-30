@@ -1,13 +1,16 @@
 import { Select, SelectProps } from "@chakra-ui/react";
 import { ReactElement } from "react";
-import type { CommonFieldSpecificProps, OmitOverlap } from "../types";
+import type {
+  CommonFieldSpecificProps,
+  CommonOptionsProps,
+  OmitOverlap,
+} from "../types";
 
 export interface SelectFieldProps
   extends CommonFieldSpecificProps<string>,
+    CommonOptionsProps,
     OmitOverlap<SelectProps> {
   type: "select";
-  options: Array<string>;
-  getOptionLabel?: (option: string) => string;
 }
 
 export default function SelectField({

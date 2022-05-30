@@ -29,6 +29,7 @@ import {
   TextField,
   TextListField,
   SelectField,
+  AutocompleteField,
 } from "./components";
 
 function FieldComponent(props: FieldSpecificProps): ReactElement | null {
@@ -62,6 +63,9 @@ function FieldComponent(props: FieldSpecificProps): ReactElement | null {
     }
     case "switch": {
       return <SwitchField {...props} />;
+    }
+    case "autocomplete": {
+      return <AutocompleteField {...props} />;
     }
     default:
       return null;

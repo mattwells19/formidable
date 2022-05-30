@@ -6,15 +6,18 @@ import {
   UseCheckboxProps,
 } from "@chakra-ui/react";
 import { ReactElement } from "react";
-import type { CommonFieldSpecificProps, OmitOverlap } from "../types";
+import type {
+  CommonFieldSpecificProps,
+  CommonOptionsProps,
+  OmitOverlap,
+} from "../types";
 import ToggleButton from "./ToggleButton";
 
 export interface CheckboxGroupFieldProps
   extends CommonFieldSpecificProps<Array<string>>,
+    CommonOptionsProps,
     OmitOverlap<FlexProps> {
   type: "toggle-checkbox";
-  options: Array<string>;
-  getOptionLabel?: (option: string) => string;
   limit?: number;
 }
 

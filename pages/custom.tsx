@@ -27,6 +27,7 @@ export default function Custom() {
         .refine((val) => getUTCDate(val).getTime() < getUTCDate().getTime()),
       select: zu.singleSelect(),
       switch: zu.switch(),
+      autocomplete: zu.multiSelect(),
     }),
     [zu]
   );

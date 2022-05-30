@@ -44,6 +44,9 @@ function useFormValidation() {
       textList: zu.multiSelect().min(2, {
         message: formatMessage({ id: "needX" }, { x: 2 }),
       }),
+      autocomplete: zu.multiSelect().min(1, {
+        message: "Field is required. Must be a valid option.",
+      }),
       date: zu
         .date()
         .refine((val) => getUTCDate(val).getTime() < getUTCDate().getTime(), {
@@ -114,6 +117,23 @@ const fields: Array<FieldProps> = [
     helperText: "Separate by commas.",
   },
   {
+    type: "autocomplete",
+    name: "autocomplete",
+    label: "Autocomplete",
+    helperText: "Click to see your options.",
+    options: [
+      "React",
+      "Vue",
+      "Angular",
+      "Remix",
+      "NextJS",
+      "Chakra UI",
+      "Material UI",
+      "ExpressJS",
+      "Zod",
+    ],
+  },
+  {
     type: "date",
     name: "date",
     label: "Date field",
@@ -148,6 +168,7 @@ export default function App() {
         display="flex"
         flexDir="column"
         gap="8"
+        maxWidth="md"
       >
         {(formValidationState) => (
           <>

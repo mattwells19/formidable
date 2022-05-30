@@ -1,14 +1,17 @@
-import type { TextFieldProps } from "./components/TextField";
-import type { NumberFieldProps } from "./components/NumberField";
-import type { SelectFieldProps } from "./components/SelectField";
-import type { TextareaFieldProps } from "./components/TextareaField";
-import type { CheckboxGroupFieldProps } from "./components/CheckboxGroupField";
-import type { RadioGroupFieldProps } from "./components/RadioGroupField";
-import type { CurrencyFieldProps } from "./components/CurrencyField";
-import type { TextListFieldProps } from "./components/TextListField";
-import type { DateFieldProps } from "./components/DateField";
-import type { UseFormResult } from "./contexts/FormContext";
-import type { SwitchProps } from "./components/SwitchField";
+import type {
+  TextFieldProps,
+  NumberFieldProps,
+  SelectFieldProps,
+  TextareaFieldProps,
+  CheckboxGroupFieldProps,
+  RadioGroupFieldProps,
+  CurrencyFieldProps,
+  TextListFieldProps,
+  DateFieldProps,
+  SwitchFieldProps,
+  AutocompleteFieldProps,
+} from "./components";
+import { UseFormResult } from "./contexts/FormContext";
 
 export type FormElement = {
   name: string;
@@ -28,7 +31,8 @@ export type FieldType =
   | "toggle-checkbox"
   | "textarea"
   | "date"
-  | "switch";
+  | "switch"
+  | "autocomplete";
 
 export type CommonFieldProps = {
   name: string;
@@ -47,6 +51,11 @@ export type CommonFieldSpecificProps<T> = {
   defaultValue?: T;
 };
 
+export type CommonOptionsProps = {
+  options: Array<string>;
+  getOptionLabel?: (option: string) => string;
+};
+
 export type FieldSpecificProps =
   | TextFieldProps
   | NumberFieldProps
@@ -57,7 +66,8 @@ export type FieldSpecificProps =
   | CurrencyFieldProps
   | TextListFieldProps
   | DateFieldProps
-  | SwitchProps;
+  | SwitchFieldProps
+  | AutocompleteFieldProps;
 
 export type FieldProps = CommonFieldProps & FieldSpecificProps;
 

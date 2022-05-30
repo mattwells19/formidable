@@ -3,6 +3,10 @@ import { FormElement, FormValidationState } from "../types";
 
 export interface FormContextValue {
   registerField: (formField: FormElement) => void;
+  /**
+   * Do not use unless you have to
+   */
+  manualOnChange: () => void;
   formErrorMap: Map<string, string>;
   touchedFields: Set<string>;
   ignoreTouch: boolean;
@@ -31,7 +35,8 @@ export function useForm(): FormContextValue {
  * It's split out like this so that memoization is easier
  * for the Field component.
  */
-export interface UseFormResult extends Pick<FormContextValue, "registerField"> {
+export interface UseFormResult
+  extends Pick<FormContextValue, "registerField" | "manualOnChange"> {
   error: string | undefined;
   isTouched: boolean;
 }
@@ -43,6 +48,7 @@ export function useFormField(fieldName: string): UseFormResult | null {
 
   return {
     registerField: context.registerField,
+    manualOnChange: context.manualOnChange,
     get error() {
       return context.formErrorMap.get(fieldName);
     },

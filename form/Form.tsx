@@ -85,53 +85,72 @@ export default function Form<FormValues extends ZodRawShape>({
   /**
    * Merge the errors from onChange with existing errors to avoid unecessary re-renders
    */
-  const onFieldErrors = (fieldsErrors: Map<string, string>) => {
-    setFormErrorMap((prevErr) => {
-      if (fieldsErrors.size === 0 && prevErr.size > 0) return new Map();
+  const onFieldErrors = useCallback(
+    (fieldsErrors: Map<string, string>) => {
+      setFormErrorMap((prevErr) => {
+        if (fieldsErrors.size === 0 && prevErr.size > 0) return new Map();
 
-      let changed = false;
-      const newErrMap = new Map(prevErr);
+        let changed = false;
+        const newErrMap = new Map(prevErr);
 
-      fields.forEach(({ name }) => {
-        const incomingErr = fieldsErrors.get(name);
-        const existingErr = newErrMap.get(name);
+        fields.forEach(({ name }) => {
+          const incomingErr = fieldsErrors.get(name);
+          const existingErr = newErrMap.get(name);
 
-        if (incomingErr && incomingErr !== existingErr) {
-          newErrMap.set(name, incomingErr);
-          changed = true;
-        } else if (existingErr && !incomingErr) {
-          newErrMap.delete(name);
-          changed = true;
-        }
+          if (incomingErr && incomingErr !== existingErr) {
+            newErrMap.set(name, incomingErr);
+            changed = true;
+          } else if (existingErr && !incomingErr) {
+            newErrMap.delete(name);
+            changed = true;
+          }
+        });
+
+        return changed ? newErrMap : prevErr;
       });
-
-      return changed ? newErrMap : prevErr;
-    });
-  };
+    },
+    [fields]
+  );
 
   /**
    * Get all form fields and run validation schema to get error messages
    */
-  function validateAllFields(formElement: HTMLFormElement) {
-    const formDataObj = new FormData(formElement);
-    const formData = extractFormValues(fields, formDataObj);
-    const validation = validationShape.safeParse(formData);
+  const validateAllFields = useCallback(
+    (formElement: HTMLFormElement) => {
+      const formDataObj = new FormData(formElement);
+      const formData = extractFormValues(fields, formDataObj);
+      const validation = validationShape.safeParse(formData);
 
-    const errors = new Map<string, string>();
-    if (!validation.success) {
-      const allFieldErrors = validation.error.formErrors.fieldErrors;
-      Object.entries(allFieldErrors).forEach(([name, fieldErrors]) => {
-        if (!Array.isArray(fieldErrors)) {
-          throw new Error(
-            `fieldError wasn't an array somehow - ${name}\n${fieldErrors}`
-          );
-        }
-        errors.set(name, fieldErrors[0]);
-      });
+      const errors = new Map<string, string>();
+      if (!validation.success) {
+        const allFieldErrors = validation.error.formErrors.fieldErrors;
+        Object.entries(allFieldErrors).forEach(([name, fieldErrors]) => {
+          if (!Array.isArray(fieldErrors)) {
+            throw new Error(
+              `fieldError wasn't an array somehow - ${name}\n${fieldErrors}`
+            );
+          }
+          errors.set(name, fieldErrors[0]);
+        });
+      }
+
+      onFieldErrors(errors);
+    },
+    [fields, onFieldErrors, validationShape]
+  );
+
+  /**
+   * Function to manually re-run validation if an onChange event can't be triggered
+   *
+   * Not a huge fan of this, but the autocomplete needs to revalidate if one of
+   * the chips is removed from selection. Because that action doesn't trigger an onChange
+   * it won't bubble up and revalidate like the other fields do
+   */
+  const manualOnChange = useCallback(() => {
+    if (formRef.current) {
+      validateAllFields(formRef.current);
     }
-
-    onFieldErrors(errors);
-  }
+  }, [validateAllFields]);
 
   function handleTouch(e: React.FocusEvent<HTMLFormElement>) {
     const inputName = e.target.name;
@@ -175,7 +194,7 @@ export default function Form<FormValues extends ZodRawShape>({
     if (formRef.current) {
       validateAllFields(formRef.current);
     }
-  }, [fields.length]);
+  }, [fields.length, validateAllFields]);
 
   const contextValue: FormContextValue = useMemo(
     () => ({
@@ -184,6 +203,7 @@ export default function Form<FormValues extends ZodRawShape>({
       touchedFields,
       ignoreTouch,
       formValidationState,
+      manualOnChange,
     }),
     [
       registerField,
@@ -191,6 +211,7 @@ export default function Form<FormValues extends ZodRawShape>({
       touchedFields,
       ignoreTouch,
       formValidationState,
+      manualOnChange,
     ]
   );
 
