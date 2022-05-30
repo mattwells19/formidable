@@ -1,14 +1,61 @@
+import { useMemo } from "react";
+import { useIntl } from "react-intl";
 import zod from "zod";
 
-const zodUtils = {
-  radio: zod.string().min(1),
-  text: zod.string().trim().min(1),
-  multi: zod.preprocess((val) => {
-    if (Array.isArray(val)) return val;
-    if (val === undefined) return [];
-    return [val];
-  }, zod.string().array().min(1)),
-  number: zod.number().min(0).default(-1),
+const useZodUtils = () => {
+  const { formatMessage } = useIntl();
+  const defaultRequiredMsg = formatMessage({ id: "fieldIsRequired" });
+
+  return useMemo(() => {
+    const radio = () =>
+      zod.string().min(1, {
+        message: defaultRequiredMsg,
+      });
+
+    const text = () =>
+      zod.string().trim().min(1, {
+        message: defaultRequiredMsg,
+      });
+
+    const number = () =>
+      zod.number({
+        invalid_type_error: defaultRequiredMsg,
+      });
+
+    const multiSelect = () =>
+      zod.string().array().min(1, {
+        message: defaultRequiredMsg,
+      });
+
+    const date = () =>
+      zod
+        .date({
+          invalid_type_error: defaultRequiredMsg,
+        })
+        .refine((val) => Boolean(val), {
+          message: defaultRequiredMsg,
+        });
+
+    const switchV = () =>
+      zod
+        .boolean()
+        .default(false)
+        .refine((val) => val, {
+          message: defaultRequiredMsg,
+        });
+
+    const form = zod.object;
+
+    return {
+      radio,
+      text,
+      number,
+      multiSelect,
+      date,
+      switch: switchV,
+      form,
+    };
+  }, [defaultRequiredMsg]);
 };
 
-export default zodUtils;
+export default useZodUtils;

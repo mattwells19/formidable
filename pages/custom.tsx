@@ -1,29 +1,11 @@
 import { Button, ButtonGroup } from "@chakra-ui/react";
 import Form, { Field, FieldProps, FieldType } from "../components/Form";
-import zod, { ZodTypeAny } from "zod";
-import { useReducer, useState } from "react";
+import type { ZodTypeAny } from "zod";
+import { useMemo, useReducer, useState } from "react";
 import FormSubmissionModal from "../components/FormSubmissionModal";
 import { getUTCDate } from "../components/Form/utils";
 import FieldEditor from "../components/FieldEditor";
-
-const validationSchemas: Record<FieldType, ZodTypeAny> = {
-  text: zod.string().min(1),
-  currency: zod.number().min(250000),
-  number: zod.number().min(0),
-  textarea: zod.string().min(10).max(500),
-  "toggle-checkbox": zod.string().array().min(1).max(2),
-  "toggle-radio": zod.string({}),
-  "multi-select": zod.string().array().min(1),
-  date: zod
-    .date({})
-    .refine((val) => Boolean(val))
-    .refine((val) => getUTCDate(val).getTime() < getUTCDate().getTime()),
-  select: zod.string().min(1),
-  switch: zod
-    .boolean()
-    .default(false)
-    .refine((val) => val),
-};
+import useZodUtils from "../components/Form/zod-utils";
 
 type CustomFormValues = Record<
   string,
@@ -31,6 +13,25 @@ type CustomFormValues = Record<
 >;
 
 export default function Custom() {
+  const zu = useZodUtils();
+  const validationSchemas = useMemo(
+    (): Record<FieldType, ZodTypeAny> => ({
+      text: zu.text(),
+      currency: zu.number().min(250000),
+      number: zu.number().min(0),
+      textarea: zu.text().min(10).max(500),
+      "toggle-checkbox": zu.multiSelect().max(2),
+      "toggle-radio": zu.text(),
+      "multi-select": zu.multiSelect(),
+      date: zu
+        .date()
+        .refine((val) => getUTCDate(val).getTime() < getUTCDate().getTime()),
+      select: zu.text(),
+      switch: zu.switch(),
+    }),
+    [zu]
+  );
+
   const [key, reset] = useReducer((prev) => !prev, true);
   const [ignoreTouch, toggleIgnoreTouch] = useReducer((prev) => !prev, false);
   const [values, setValues] = useState<CustomFormValues | null>(null);
@@ -39,10 +40,15 @@ export default function Custom() {
   const [formFields, setFormFields] = useState<Array<FieldProps>>([]);
 
   const formValidation = formFields.reduce((acc, formField) => {
+    let schema = validationSchemas[formField.type];
+    if (formField.isOptional) {
+      schema = schema.optional();
+    }
+
     return acc.extend({
-      [formField.name]: validationSchemas[formField.type],
+      [formField.name]: schema,
     });
-  }, zod.object({}));
+  }, zu.form({}));
 
   const handleSubmit = (formValues: CustomFormValues) => {
     setValues(formValues);

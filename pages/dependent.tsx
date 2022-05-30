@@ -1,9 +1,8 @@
 import { Button, useDisclosure, ButtonGroup } from "@chakra-ui/react";
 import Form, { Field } from "../components/Form";
-import zod from "zod";
 import { useMemo, useReducer, useState } from "react";
-import { useIntl } from "react-intl";
 import FormSubmissionModal from "../components/FormSubmissionModal";
+import useZodUtils from "../components/Form/zod-utils";
 
 const bookOptions = ["Anxious People", "Martyn Pig", "Lucas", "Other"];
 
@@ -13,29 +12,19 @@ type FormValues = {
 };
 
 function useFormValidation(isOpen: boolean) {
-  const { formatMessage } = useIntl();
+  const zu = useZodUtils();
 
   return useMemo(() => {
-    const formValidationNoOther = zod.object({
-      checkbox: zod
-        .string()
-        .array()
-        .min(1, {
-          message: formatMessage({ id: "fieldIsRequired" }),
-        }),
+    const formValidationNoOther = zu.form({
+      checkbox: zu.multiSelect(),
     });
 
     const formValidationWithOther = formValidationNoOther.extend({
-      dependentInput: zod
-        .string()
-        .trim()
-        .min(1, {
-          message: formatMessage({ id: "fieldIsRequired" }),
-        }),
+      dependentInput: zu.text(),
     });
 
     return isOpen ? formValidationWithOther : formValidationNoOther;
-  }, [isOpen]);
+  }, [isOpen, zu]);
 }
 
 export default function Dependent() {

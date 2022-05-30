@@ -1,5 +1,7 @@
 import type { FormElement } from "./types";
 
+// 💡 Tip: Need to use undefined if the value is 'empty' so that it fails 'required' validation
+
 export function extractFormValues(
   fields: Array<FormElement>,
   formDataObj: FormData
@@ -9,11 +11,14 @@ export function extractFormValues(
       case "toggle-radio":
       case "textarea":
       case "select":
-      case "text":
+      case "text": {
+        const value = formDataObj.getAll(field.name)[0]?.toString().trim();
+
         return {
           ...acc,
-          [field.name]: formDataObj.getAll(field.name)[0]?.toString(),
+          [field.name]: !value || value.length === 0 ? undefined : value,
         };
+      }
       case "currency":
       case "number":
         return {
@@ -54,7 +59,7 @@ export function extractFormValues(
       case "switch": {
         return {
           ...acc,
-          [field.name]: formDataObj.get(field.name) !== null,
+          [field.name]: formDataObj.get(field.name) === null ? undefined : true,
         };
       }
       default:

@@ -11,6 +11,7 @@ import {
 import { ReactElement, useReducer } from "react";
 import Form, { Field, FieldProps, FieldType } from "./Form";
 import zod from "zod";
+import useZodUtils from "./Form/zod-utils";
 
 interface FieldEditorProps {
   isOpen: boolean;
@@ -31,20 +32,22 @@ const fieldTypesEnum = zod.enum([
   "switch",
 ]);
 
-const defaultValidationShape = zod.object({
-  type: fieldTypesEnum,
-  name: zod.string().trim().min(1),
-  label: zod.string().trim().min(1),
-  helperText: zod.string().trim().optional(),
-  tooltipText: zod.string().trim().optional(),
-  isOptional: zod.boolean().default(false),
-});
-
 const FieldEditor = ({
   isOpen,
   onClose,
   onSubmit,
 }: FieldEditorProps): ReactElement => {
+  const zu = useZodUtils();
+
+  const defaultValidationShape = zu.form({
+    type: fieldTypesEnum,
+    name: zu.text(),
+    label: zu.text(),
+    helperText: zu.text().optional(),
+    tooltipText: zu.text().optional(),
+    isOptional: zu.switch().optional(),
+  });
+
   const [{ fieldType, validationShape }, setFieldType] = useReducer(
     (_: any, newFieldType: FieldType) => {
       if (
@@ -55,7 +58,7 @@ const FieldEditor = ({
         return {
           fieldType: newFieldType,
           validationShape: defaultValidationShape.extend({
-            options: zod.string().array().min(2),
+            options: zu.multiSelect().min(2),
           }),
         };
       } else {

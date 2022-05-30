@@ -1,10 +1,10 @@
 import { Button, ButtonGroup } from "@chakra-ui/react";
 import Form, { Field, FieldProps } from "../components/Form";
-import zod from "zod";
 import { useMemo, useReducer, useState } from "react";
 import { useIntl } from "react-intl";
 import FormSubmissionModal from "../components/FormSubmissionModal";
 import { getUTCDate } from "../components/Form/utils";
+import useZodUtils from "../components/Form/zod-utils";
 
 type FormValues = {
   textInput: string;
@@ -20,61 +20,35 @@ type FormValues = {
 
 function useFormValidation() {
   const { formatMessage } = useIntl();
+  const zu = useZodUtils();
 
   return useMemo(() => {
-    const formValidation = zod.object({
-      textInput: zod.string().min(1, {
-        message: formatMessage({ id: "fieldIsRequired" }),
+    const formValidation = zu.form({
+      textInput: zu.text(),
+      currency: zu.number().min(250000, {
+        message: formatMessage({ id: "min250k" }),
       }),
-      currency: zod
-        .number({
-          invalid_type_error: formatMessage({ id: "fieldIsRequired" }),
-        })
-        .min(250000, {
-          message: formatMessage({ id: "min250k" }),
-        }),
-      numberInput: zod
-        .number({
-          invalid_type_error: formatMessage({ id: "fieldIsRequired" }),
-        })
-        .min(0, {
-          message: formatMessage({ id: "notNegative" }),
-        }),
-      optionalInput: zod.string().optional(),
-      textArea: zod
-        .string()
+      numberInput: zu.number().min(0, {
+        message: formatMessage({ id: "notNegative" }),
+      }),
+      optionalInput: zu.text().optional(),
+      textArea: zu
+        .text()
         .min(10, {
           message: formatMessage({ id: "min10Chars" }),
         })
         .max(500, {
           message: formatMessage({ id: "max500Chars" }),
         }),
-      limitedCheckbox: zod
-        .string()
-        .array()
-        .min(1, {
-          message: formatMessage({ id: "fieldIsRequired" }),
-        })
-        .max(2),
-      radio: zod.string({
-        required_error: formatMessage({ id: "fieldIsRequired" }),
-      }),
-      textList: zod
-        .string()
-        .array()
-        .min(1, {
-          message: formatMessage({ id: "fieldIsRequired" }),
-        }),
-      date: zod
-        .date({
-          invalid_type_error: formatMessage({ id: "fieldIsRequired" }),
-        })
-        .refine((val) => Boolean(val), {
-          message: formatMessage({ id: "fieldIsRequired" }),
-        })
+      limitedCheckbox: zu.multiSelect().max(2),
+      radio: zu.radio(),
+      textList: zu.multiSelect(),
+      date: zu
+        .date()
         .refine((val) => getUTCDate(val).getTime() < getUTCDate().getTime(), {
           message: formatMessage({ id: "mustBeInThePast" }),
         }),
+      agree: zu.switch(),
     });
 
     return formValidation;
@@ -93,6 +67,13 @@ const fields: Array<FieldProps> = [
     label: "Numbers only",
     tooltipText: "Has to be positive",
     min: 0,
+  },
+  {
+    type: "currency",
+    name: "currency",
+    label: "Currency amount",
+    helperText: "Minimum of $250k",
+    min: 250000,
   },
   {
     type: "select",
@@ -136,6 +117,11 @@ const fields: Array<FieldProps> = [
     name: "date",
     label: "Date field",
     helperText: "Cannot be today.",
+  },
+  {
+    type: "switch",
+    name: "agree",
+    label: "Agree?",
   },
 ];
 
