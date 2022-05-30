@@ -22,8 +22,8 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <IntlProvider locale="en-US" messages={messages}>
         <ChakraProvider>
-          <Box marginY="10" width="fit-content" padding="9" margin="auto">
-            <Box as="header">
+          <Box marginY="10" padding="9" margin="auto">
+            <Box as="header" maxWidth="container.lg" margin="auto">
               <Heading as="h1" textAlign="center">
                 Formidable
               </Heading>
