@@ -10,6 +10,7 @@ import {
   Tooltip,
   Icon,
   Text,
+  Box,
 } from "@chakra-ui/react";
 import { useFormField } from "./contexts/FormContext";
 
@@ -31,6 +32,7 @@ import {
   SelectField,
   AutocompleteField,
 } from "./components";
+import useFloatingLabel from "./hooks/useFloatingLabel";
 
 function FieldComponent(props: FieldSpecificProps): ReactElement | null {
   switch (props.type) {
@@ -108,6 +110,7 @@ const Field = memo(function Field({
   ...rest
 }: FieldComponentProps): ReactElement {
   console.log("render", name);
+  const floating = useFloatingLabel(rest.type);
 
   useEffect(() => {
     if (!registerField) {
@@ -160,33 +163,37 @@ const Field = memo(function Field({
       isDisabled={isDisabled}
       isInvalid={Boolean(error && isTouched)}
       {...formControlProps}
+      {...floating.formControlProps}
     >
-      <FormLabel
-        display="flex"
-        alignItems="center"
-        optionalIndicator={isOptional ? <OptionalIndicator /> : undefined}
-        {...labelProps}
-      >
-        {label}
-        {tooltipText ? (
-          <Tooltip label={tooltipText}>
-            <Icon viewBox="0 0 24 24" color="blue.300" marginLeft="2">
-              <circle
-                x="50%"
-                y="50%"
-                cx="12"
-                cy="12"
-                r="12"
-                fill="currentColor"
-              />
-              <text x="40%" y="75%" fontWeight="bold">
-                i
-              </text>
-            </Icon>
-          </Tooltip>
-        ) : null}
-      </FormLabel>
-      <FieldComponent name={name} {...rest} />
+      <Box position="relative">
+        <FormLabel
+          display="flex"
+          alignItems="center"
+          optionalIndicator={isOptional ? <OptionalIndicator /> : undefined}
+          {...labelProps}
+          {...floating.labelProps}
+        >
+          {label}
+          {tooltipText ? (
+            <Tooltip label={tooltipText}>
+              <Icon viewBox="0 0 24 24" color="blue.300" marginLeft="2">
+                <circle
+                  x="50%"
+                  y="50%"
+                  cx="12"
+                  cy="12"
+                  r="12"
+                  fill="currentColor"
+                />
+                <text x="40%" y="75%" fontWeight="bold">
+                  i
+                </text>
+              </Icon>
+            </Tooltip>
+          ) : null}
+        </FormLabel>
+        <FieldComponent name={name} {...rest} />
+      </Box>
       {/* eslint-disable-next-line no-nested-ternary */}
       {error && isTouched ? (
         <FormErrorMessage>{error}</FormErrorMessage>

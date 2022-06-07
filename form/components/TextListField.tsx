@@ -68,13 +68,16 @@ export default function TextListField({
           as="button"
           onClick={onOpen}
           onFocus={onOpen}
-          alignItems="center"
-          paddingY="1"
-          paddingX="1.5"
-          display="flex"
-          gap="1"
           title={`Edit ${inputValueRef.current}`.trim()}
           name={`formatted_${name}`}
+          display="flex"
+          alignItems="center"
+          flexWrap="wrap"
+          gap="1"
+          paddingX="2.5"
+          paddingY="1"
+          height="auto"
+          minHeight="10"
         >
           {listValues.map((v) => (
             <Tag key={v}>{v}</Tag>
